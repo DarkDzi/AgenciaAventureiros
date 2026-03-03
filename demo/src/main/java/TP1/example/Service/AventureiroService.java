@@ -1,7 +1,7 @@
 package TP1.example.Service;
 
-import TP1.example.Domain.Cliente;
-import TP1.example.Repository.ClienteRepository;
+import TP1.example.Domain.Aventureiro;
+import TP1.example.Repository.AventureiroRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,17 +9,17 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ClienteService {
-    private final ClienteRepository repository;
+public class AventureiroService {
+    private final AventureiroRepository repository;
 
-    public List<Cliente> ListarTodos() {
+    public List<Aventureiro> ListarTodos() {
         return repository.findAll();
     }
-    public Cliente BuscarPorId(Long id) {
+    public Aventureiro BuscarPorId(Long id) {
         return repository.findById(id).orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
     }
-    public Cliente Salvar(Cliente cliente) {
-        return repository.save(cliente);
+    public Aventureiro Salvar(Aventureiro aventureiro) {
+        return repository.save(aventureiro);
     }
     public void Deletar(Long id) {
         repository.deleteById(id);
