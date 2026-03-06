@@ -77,8 +77,8 @@ public class AventureiroService {
         FakeDataBase.aventureiros.add(aventureiro);
         return aventureiro;
     }
-    public void Deletar(Long id) {
-        FakeDataBase.aventureiros.removeIf(a -> a.getId().equals(id));
+    public boolean Deletar(Long id) {
+        return FakeDataBase.aventureiros.removeIf(a -> a.getId().equals(id));
     }
     public void AtualizarNome(Long id, String nome) {
         Optional<Aventureiro> aventureiroOpt = FakeDataBase.aventureiros.stream()
@@ -98,11 +98,15 @@ public class AventureiroService {
                 .findFirst();
         aventureiroOpt.ifPresent(a -> a.setNivel(nivel));
     }
-    public void EncerrarVinculo(Long id) {
+    public boolean EncerrarVinculo(Long id) {
         Optional<Aventureiro> aventureiroOpt = FakeDataBase.aventureiros.stream()
                 .filter(a -> a.getId().equals(id))
                 .findFirst();
-        aventureiroOpt.ifPresent(a -> a.setStatus(StatusAventureiro.INATIVO));
+        if (aventureiroOpt.isPresent()) {
+            aventureiroOpt.get().setStatus(StatusAventureiro.INATIVO);
+            return true;
+        }
+        return false;
     }
     public void RecrutarNovamente(Long id) {
         Optional<Aventureiro> aventureiroOpt = FakeDataBase.aventureiros.stream()
@@ -110,11 +114,15 @@ public class AventureiroService {
                 .findFirst();
         aventureiroOpt.ifPresent(a -> a.setStatus(StatusAventureiro.ATIVO));
     }
-    public void DefinirComapanheiro(Long avid, Companheiro companheiro) {
+    public boolean DefinirCompanheiro(Long avid, Companheiro companheiro) {
         Optional<Aventureiro> aventureiroOpt = FakeDataBase.aventureiros.stream()
                 .filter(a -> a.getId().equals(avid))
                 .findFirst();
-        aventureiroOpt.ifPresent(a -> a.setCompanheiro(companheiro));
+        if (aventureiroOpt.isPresent()) {
+            aventureiroOpt.get().setCompanheiro(companheiro);
+            return true;
+        }
+        return false;
     }
     public void RemoverCompanheiro(Long avid) {
         Optional<Aventureiro> aventureiroOpt = FakeDataBase.aventureiros.stream()
