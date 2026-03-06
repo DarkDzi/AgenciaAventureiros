@@ -7,18 +7,15 @@ import jakarta.validation.constraints.Min;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 
-@Entity
+@Embeddable
 @Getter@Setter
 public class Companheiro {
-    @Id@GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(nullable = false)
     private String nome;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String especie;
+    private CompanheiroEspecie especie;
 
     @Column(nullable = false)
     @Min(0)

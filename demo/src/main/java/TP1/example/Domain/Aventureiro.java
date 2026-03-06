@@ -26,9 +26,22 @@ public class Aventureiro {
     @Column(nullable = false)
     private StatusAventureiro status = StatusAventureiro.ATIVO;
 
-
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "nome", column = @Column(name = "companheiro_nome")),
+            @AttributeOverride(name = "especie", column = @Column(name = "companheiro_especie")),
+            @AttributeOverride(name = "lealdade", column = @Column(name =  "companheiro_lealdade"))
+    })
     private Companheiro companheiro;
 
+    public Aventureiro(Companheiro companheiro, StatusAventureiro status, Integer nivel, Classe classe, String nome, Long id) {
+        this.companheiro = companheiro;
+        this.status = status;
+        this.nivel = nivel;
+        this.classe = classe;
+        this.nome = nome;
+        this.id = id;
+    }
 
     protected Aventureiro() {
     }
