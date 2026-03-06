@@ -14,11 +14,11 @@ public class AventureiroController {
     public AventureiroController(AventureiroService service) {
         this.service = service;
     }
-    @GetMapping
-    public List<Aventureiro> listar() {
+    @GetMapping("/all")
+    public List<Aventureiro> ListarTodos() {
         return  service.ListarTodos();
     }
-    @GetMapping("aventureiros/{id}")
+    @GetMapping("/{id}")
     public Aventureiro buscar(@PathVariable Long id) {
         return service.BuscarPorId(id);
     }
@@ -28,9 +28,19 @@ public class AventureiroController {
         System.out.print("Aventureiro: " + aventureiro.getNome() + " Registrado!" );
         return service.Salvar(aventureiro);
     }
-    @DeleteMapping("aventureiros/{id}")
+    @DeleteMapping("/{id}")
     public void deletar(@PathVariable Long id) {
         service.Deletar(id);
+    }
+    @PatchMapping("/{id}")
+    public Aventureiro atualizar(@PathVariable Long id,@RequestBody Aventureiro novosdados) {
+        if(novosdados.getNome() != null) service.AtualizarNome(id, novosdados.getNome());
+        if(novosdados.getClasse() != null) service.AtualizarClasse(id, novosdados.getClasse());
+        if(novosdados.getNivel() != null) service.AtualizarNivel(id, novosdados.getNivel());
+
+
+        return service.BuscarPorId(id);
+
     }
 }
 //TODO Fazer pageamento

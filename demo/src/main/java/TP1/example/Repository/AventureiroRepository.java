@@ -13,5 +13,4 @@ public interface AventureiroRepository extends JpaRepository<Aventureiro, Long> 
     List<Aventureiro> findByStatus(StatusAventureiro status);
     List<Aventureiro> findByNivelGreaterThan(Integer nivel);
     List<Aventureiro> findByClasse(Classe classe);
-    Aventureiro id(Long id);
 }
