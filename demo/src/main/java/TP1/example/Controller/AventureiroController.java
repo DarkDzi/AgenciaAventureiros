@@ -22,11 +22,11 @@ public class AventureiroController {
     public List<Aventureiro> ListarTodos() {
         return  service.ListarTodos();
     }
-    @GetMapping("/{classe}")
+    @GetMapping("/classe={classe}")
     public List<Aventureiro> ListarPorClasse(@PathVariable Classe classe) {
         return  service.ListarPorClasse(classe);
     }
-    @GetMapping("/{status}")
+    @GetMapping("/status={status}")
     public List<Aventureiro> ListarPorStatus(@PathVariable StatusAventureiro status) {
         return  service.ListarPorStatus(status);
     }
