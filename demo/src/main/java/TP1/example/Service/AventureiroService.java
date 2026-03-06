@@ -19,6 +19,33 @@ import java.util.stream.Collectors;
 public class AventureiroService {
     //TODO Reduzir repetição de código aqui
     private final AventureiroRepository repository;
+    public List<Aventureiro> listarComPaginacao(
+            Classe classe,
+            StatusAventureiro status,
+            Integer nivelMin,
+            int page,
+            int size) {
+        List<Aventureiro> lista = FakeDataBase.aventureiros;
+        if(classe != null) {
+            lista.removeIf(a -> a.getClasse().equals(classe));
+        }
+        if(status != null) {
+            lista.removeIf(a -> a.getStatus().equals(status));
+        }
+        if(nivelMin != null) {
+            lista.removeIf(a -> a.getNivel().equals(nivelMin));
+        }
+        if(page < 0) page = 0;
+        if(size < 0) size = 20;
+        if(size > 50) size =50;
+
+        int fromIndex  = page*size;
+        int toIndex = Math.min(fromIndex + size, lista.size());
+        if(fromIndex > lista.size()){
+            return List.of();
+        }
+        return lista.subList(fromIndex, toIndex);
+    }
 
     public List<Aventureiro> ListarTodos() {
         return FakeDataBase.aventureiros;
