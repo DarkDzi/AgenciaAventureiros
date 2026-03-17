@@ -1,13 +1,14 @@
-service:
+services:
   db:
-    image: leogloriainfnet/postgres-tp2-spring
-    command: sh -c "npm install && npm run dev"
+    image: leogloriainfnet/postgres-tp2-spring:1.0
     ports:
       - "5432:5432"
     container_name: TP2_SpringBoot
     restart: always
-    enviroment:
-        POSTGRES_PASSWORD=1234
-        POSTGRES_USER=Aluno
-
-
+    environment:
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_USER=Aluno
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
