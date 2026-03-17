@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 @Entity
 @Getter
 @Setter
+@Table(name = "usuarios", schema = "audit")
 public class Usuario {
 
     @Id
@@ -17,8 +18,7 @@ public class Usuario {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "organizacao_id", nullable = false)
+    @Column(name = "organizacao_id", nullable = false)
     private Long orgid;
 
     @Column(name= "nome", nullable = false)
