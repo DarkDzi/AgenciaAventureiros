@@ -28,9 +28,11 @@ public class Usuario {
     private String email;
 
     @Column(name = "senha_hash", nullable = false)
-    private String hash;
+    private String senhahash;
+
 
     @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
     private StatusUsuario status = StatusUsuario.ATIVO;
 
     @Column(name = "ultimo_login_em")
@@ -56,7 +58,7 @@ public class Usuario {
         this.orgid = orgid;
         this.nome = nome;
         this.email = email;
-        this.hash = hash;
+        this.senhahash = hash;
         this.status = status;
         this.ultimologin = ultimologin;
         this.criadoem = criadoem;
