@@ -7,7 +7,7 @@ services:
     restart: always
     environment:
       - POSTGRES_PASSWORD=1234
-      - POSTGRES_USER=aluno
+      - POSTGRES_USER=Aluno
     volumes:
       - pgdata:/var/lib/postgresql/data
 volumes:

@@ -4,19 +4,19 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.swing.*;
 import java.sql.Timestamp;
 
 @Entity
 @Getter@Setter
 @Table(name="api_keys", schema="audit")
-public class ChavesAPI {
+public class ChaveAPI {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "organizacao_id", nullable = false)
-    private Long orgid;
+    @JoinColumn(name = "organizacao_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Organizacoes orgid;
 
     @Column(name = "nome" , nullable = false)
     private String nome;
@@ -33,7 +33,7 @@ public class ChavesAPI {
     @Column(name = "last_used_at")
     private Timestamp ultimouso;
 
-    public ChavesAPI(Long id, Long orgid, String nome, String chavehash, Boolean ativo, Timestamp criadoem, Timestamp ultimouso) {
+    public ChaveAPI(Long id, Organizacoes orgid, String nome, String chavehash, Boolean ativo, Timestamp criadoem, Timestamp ultimouso) {
         this.id = id;
         this.orgid = orgid;
         this.nome = nome;
@@ -43,5 +43,5 @@ public class ChavesAPI {
         this.ultimouso = ultimouso;
     }
 
-    protected ChavesAPI(){}
+    protected ChaveAPI(){}
 }

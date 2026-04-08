@@ -18,8 +18,9 @@ public class Usuario {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "organizacao_id", nullable = false)
-    private Long orgid;
+    @JoinColumn(name = "organizacao_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Organizacoes orgid;
 
     @Column(name= "nome", nullable = false)
     private String nome;
@@ -45,7 +46,7 @@ public class Usuario {
     private Timestamp atualizadoem;
 
     public Usuario(Long id,
-                   Long orgid,
+                   Organizacoes orgid,
                    String nome,
                    String email,
                    String hash,

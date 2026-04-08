@@ -3,7 +3,6 @@ package TP1.example.Audit;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -17,14 +16,17 @@ public class EntradasAuditorio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "organizacao_id", nullable = false)
-    private Long orgid;
+    @JoinColumn(name = "organizacao_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Organizacoes orgid;
 
-    @Column(name = "actor_user_id")
-    private Long actuserid;
+    @JoinColumn(name = "actor_user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Usuario actuserid;
 
-    @Column(name = "actor_api_key_id")
-    private Long actapikeyid;
+    @JoinColumn(name = "actor_api_key_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private ChaveAPI actapikeyid;
 
     @Column(name = "action", nullable = false)
     private String acao;
@@ -59,7 +61,7 @@ public class EntradasAuditorio {
     @Column(name = "success", nullable = false)
     private Boolean sucesso;
 
-    public EntradasAuditorio(Long id, Long orgid, Long actuserid, Long actapikeyid, String acao, String entidadeschema, String entidadenome, String entidadeid, Timestamp ocorridoem, String ip, String usuarioagente, String diff, String metadata, Boolean sucesso) {
+    public EntradasAuditorio(Long id, Organizacoes orgid, Usuario actuserid, ChaveAPI actapikeyid, String acao, String entidadeschema, String entidadenome, String entidadeid, Timestamp ocorridoem, String ip, String usuarioagente, String diff, String metadata, Boolean sucesso) {
         this.id = id;
         this.orgid = orgid;
         this.actuserid = actuserid;
