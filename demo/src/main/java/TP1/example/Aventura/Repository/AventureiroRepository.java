@@ -1,0 +1,16 @@
+package TP1.example.Aventura.Repository;
+
+import TP1.example.Aventura.Domain.Aventureiro;
+import TP1.example.Aventura.Domain.Classe;
+import TP1.example.Aventura.Domain.StatusAventureiro;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface AventureiroRepository extends JpaRepository<Aventureiro, Long> {
+    List<Aventureiro> findByStatus(StatusAventureiro status);
+    List<Aventureiro> findByNivelGreaterThan(Integer nivel);
+    List<Aventureiro> findByClasse(Classe classe);
+}

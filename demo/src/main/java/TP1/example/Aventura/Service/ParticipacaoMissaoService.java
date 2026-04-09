@@ -1,0 +1,97 @@
+package TP1.example.Aventura.Service;
+
+import TP1.example.Aventura.Domain.*;
+import TP1.example.Aventura.OrganizacaoValidator;
+import TP1.example.Aventura.Repository.AventureiroRepository;
+import TP1.example.Aventura.Repository.MissaoRepository;
+import TP1.example.Aventura.Repository.ParticipacaoMissaoRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class ParticipacaoMissaoService {
+
+    private final ParticipacaoMissaoRepository participacaoRepository;
+    private final MissaoRepository missaoRepository;
+    private final AventureiroRepository aventureiroRepository;
+    private final OrganizacaoValidator organizacaoValidator;
+
+    public List<ParticipacaoMissao> ListarPorMissao(Long missaoId) {
+        return participacaoRepository.findByMissaoId(missaoId);
+    }
+
+    public List<ParticipacaoMissao> ListarPorAventureiro(Long aventureiroId) {
+        return participacaoRepository.findByAventureiroId(aventureiroId);
+    }
+
+    public ParticipacaoMissao Salvar(ParticipacaoMissao participacao) {
+        Aventureiro aventureiro = aventureiroRepository.findById(
+                        participacao.getAventureiro().getId())
+                .orElseThrow(() -> new RuntimeException("Aventureiro não encontrado"));
+
+        Missao missao = missaoRepository.findById(
+                        participacao.getMissao().getId())
+                .orElseThrow(() -> new RuntimeException("Missão não encontrada"));
+
+        organizacaoValidator.existe(missao.getOrganizacao().getId());
+
+        if (aventureiro.getStatus() == StatusAventureiro.INATIVO) {
+            throw new RuntimeException("Aventureiro inativo não pode participar de missões");
+        }
+
+        if (missao.getStatus() != StatusMissao.PLANEJADA
+                && missao.getStatus() != StatusMissao.EM_ANDAMENTO) {
+            throw new RuntimeException("Missão não está em estado compatível para aceitar participantes");
+        }
+
+        if (!aventureiro.getOrganizacao().getId()
+                .equals(missao.getOrganizacao().getId())) {
+            throw new RuntimeException("Aventureiro não pertence à organização da missão");
+        }
+
+        if (participacaoRepository.existsByMissaoIdAndAventureiroId(
+                missao.getId(), aventureiro.getId())) {
+            throw new RuntimeException("Aventureiro já está participando desta missão");
+        }
+
+        return participacaoRepository.save(participacao);
+    }
+
+    public void Deletar(Long missaoId, Long aventureiroId) {
+        ParticipacaoMissaoId id = new ParticipacaoMissaoId(missaoId, aventureiroId);
+        if (!participacaoRepository.existsById(id)) {
+            throw new RuntimeException("Participação não encontrada");
+        }
+        participacaoRepository.deleteById(id);
+    }
+
+    public void AtualizarPapel(Long missaoId, Long aventureiroId, PapelMissao papel) {
+        ParticipacaoMissaoId id = new ParticipacaoMissaoId(missaoId, aventureiroId);
+        ParticipacaoMissao participacao = participacaoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Participação não encontrada"));
+        participacao.setPapel(papel);
+        participacaoRepository.save(participacao);
+    }
+
+    public void DefinirMvp(Long missaoId, Long aventureiroId) {
+        ParticipacaoMissaoId id = new ParticipacaoMissaoId(missaoId, aventureiroId);
+        ParticipacaoMissao participacao = participacaoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Participação não encontrada"));
+        participacao.setMvp(true);
+        participacaoRepository.save(participacao);
+    }
+
+    public void DefinirRecompensa(Long missaoId, Long aventureiroId, Integer ouro) {
+        if (ouro < 0) {
+            throw new RuntimeException("Recompensa não pode ser negativa");
+        }
+        ParticipacaoMissaoId id = new ParticipacaoMissaoId(missaoId, aventureiroId);
+        ParticipacaoMissao participacao = participacaoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Participação não encontrada"));
+        participacao.setRecompensaOuro(ouro);
+        participacaoRepository.save(participacao);
+    }
+}
