@@ -40,7 +40,7 @@ public class MissaoService {
         return missaoRepository.findByStatus(status, PageRequest.of(page, size));
     }
     public Page<ResultadoMinimoMissaoDto> ListarPorIntervaloDeCricao(LocalDateTime inicio, LocalDateTime fim, int page, int size){
-        return missaoRepository.findByCriadoEmBetween(inicio, fim, PageRequest.of(page, size))
+        return missaoRepository.findByCriadoemBetween(inicio, fim, PageRequest.of(page, size))
                 .map(a -> new ResultadoMinimoMissaoDto(
                         a.getId(),
                         a.getTitulo(),
@@ -52,7 +52,7 @@ public class MissaoService {
                 ));
     }
     public Page<ResultadoMinimoMissaoDto> ListarPorIntervaloDeComecoeFim(LocalDateTime inicio, LocalDateTime fim, int page, int size) {
-        return missaoRepository.findByIniciadoEmGreaterThanEqualAndTerminadoEmLessThanEqual(
+        return missaoRepository.findByIniciadaemGreaterThanEqualAndTerminadaemLessThanEqual(
                         inicio, fim, PageRequest.of(page, size))
                 .map(a -> new ResultadoMinimoMissaoDto(
                         a.getId(),

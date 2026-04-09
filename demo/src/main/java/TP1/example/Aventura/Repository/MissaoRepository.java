@@ -9,14 +9,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Repository
 public interface MissaoRepository extends JpaRepository<Missao, Long> {
     Page<Missao> findByStatus(StatusMissao status, Pageable pageable);
     Page<Missao> findBynivelPerigo(NiveldePerigo nivel, Pageable pageable);
-    Page<Missao> findByCriadoEmBetween(LocalDateTime inicio, LocalDateTime fim, Pageable pageable);
-    Page<Missao> findByIniciadoEmGreaterThanEqualAndTerminadoEmLessThanEqual(
+    Page<Missao> findByCriadoemBetween(LocalDateTime inicio, LocalDateTime fim, Pageable pageable);
+    Page<Missao> findByIniciadaemGreaterThanEqualAndTerminadaemLessThanEqual(
             LocalDateTime inicio, LocalDateTime fim, Pageable pageable
     );
 

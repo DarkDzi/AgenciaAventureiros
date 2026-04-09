@@ -17,7 +17,7 @@ import java.sql.Timestamp;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "Aventureiro", schema = "aventura")
+@Table(name = "aventureiro", schema = "aventura")
 public class Aventureiro {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,6 +43,7 @@ public class Aventureiro {
     @Min(1)
     private Integer nivel;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatusAventureiro status = StatusAventureiro.ATIVO;
 
