@@ -1,41 +1,90 @@
 package TP1.example.Aventura.Service;
 
-import TP1.example.Aventura.Domain.Aventureiro;
-import TP1.example.Aventura.Domain.Classe;
-import TP1.example.Aventura.Domain.Companheiro;
-import TP1.example.Aventura.Domain.StatusAventureiro;
+import TP1.example.Aventura.Domain.*;
+import TP1.example.Aventura.Dto.PerfilCompletoDto;
 import TP1.example.Aventura.Repository.AventureiroRepository;
+import TP1.example.Aventura.Repository.ParticipacaoMissaoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
 public class AventureiroService {
 
     private final AventureiroRepository repository;
+    private final ParticipacaoMissaoRepository participacaoMissaoRepository;
 
-    public List<Aventureiro> ListarTodos() {
-        return repository.findAll();
+
+    public Page<Aventureiro> ListarTodos(int page, int size) {
+        return repository.findAll(PageRequest.of(page, size));
     }
 
-    public List<Aventureiro> ListarPorClasse(Classe classe) {
-        return repository.findByClasse(classe);
+    public Page<Aventureiro> ListarPorClasse(Classe classe,int page, int size) {
+        return repository.findByClasse(classe, PageRequest.of(page, size));
     }
 
-    public List<Aventureiro> ListarPorNivelMaiorQue(Integer nivel) {
-        return repository.findByNivelGreaterThan(nivel);
+    public Page<Aventureiro> ListarPorNivelMaiorQue(Integer nivel,int page, int size) {
+        return repository.findByNivelGreaterThan(nivel, PageRequest.of(page, size));
     }
 
-    public List<Aventureiro> ListarPorStatus(StatusAventureiro status) {
-        return repository.findByStatus(status);
+    public Page<Aventureiro> ListarPorStatus(StatusAventureiro status,int page, int size) {
+        return repository.findByStatus(status, PageRequest.of(page, size));
+
+    }
+    public Page<TP1.example.Aventura.Dto.EssencialNomeDto> ListarPorNome(String nome, int page, int size, boolean crescente) {
+        Sort sort = crescente ? Sort.by("nome").ascending() : Sort.by("nome").descending();
+        Pageable pageable = PageRequest.of(page, size,sort);
+        return repository.findByNomeContaining(nome,pageable)
+                .map(a -> new TP1.example.Aventura.Dto.EssencialNomeDto(
+                        a.getId(),
+                        a.getNome(),
+                        a.getClasse(),
+                        a.getNivel(),
+                        a.getStatus()
+                ));
+    }
+    public PerfilCompletoDto ListarPerfilCompleto(Long id) {
+
+        Optional<Aventureiro> optAventureiro = repository.findById(id);
+        Aventureiro a = optAventureiro.orElse(null);
+
+        List<ParticipacaoMissao> participacoes= participacaoMissaoRepository.findByAventureiroId(id);
+        Missao ultimamissao = participacoes.stream()
+                .max(Comparator.comparing(ParticipacaoMissao::getCriadoem))
+                .map(ParticipacaoMissao::getMissao)
+                .orElse(null);
+        Integer totalparticipacaoMissao = participacaoMissaoRepository.countByAventureiroId(id);
+
+
+
+          return new PerfilCompletoDto(
+                  a.getId(),
+                  a.getNome(),
+                  a.getClasse(),
+                  a.getNivel(),
+                  a.getStatus(),
+                  a.getCompanheiro(),
+                  totalparticipacaoMissao,
+                  ultimamissao
+
+
+          );
     }
 
     public Aventureiro BuscarPorId(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Aventureiro não encontrado"));
     }
+
 
     public Aventureiro Salvar(Aventureiro aventureiro) {
         return repository.save(aventureiro);

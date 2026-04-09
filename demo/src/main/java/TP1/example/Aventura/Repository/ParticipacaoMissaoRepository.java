@@ -12,5 +12,6 @@ public interface ParticipacaoMissaoRepository
         extends JpaRepository<ParticipacaoMissao, ParticipacaoMissaoId> {
     List<ParticipacaoMissao> findByMissaoId(Long missaoId);
     List<ParticipacaoMissao> findByAventureiroId(Long aventureiroId);
+    int countByAventureiroId(Long aventureiroId);
     boolean existsByMissaoIdAndAventureiroId(Long missaoId, Long aventureiroId);
 }

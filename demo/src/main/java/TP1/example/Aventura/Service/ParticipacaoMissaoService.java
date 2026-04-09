@@ -16,7 +16,7 @@ public class ParticipacaoMissaoService {
 
     private final ParticipacaoMissaoRepository participacaoRepository;
     private final MissaoRepository missaoRepository;
-    private final AventureiroRepository aventureiroRepository;
+    private final AventureiroRepository essencialNomeDto;
     private final OrganizacaoValidator organizacaoValidator;
 
     public List<ParticipacaoMissao> ListarPorMissao(Long missaoId) {
@@ -28,7 +28,7 @@ public class ParticipacaoMissaoService {
     }
 
     public ParticipacaoMissao Salvar(ParticipacaoMissao participacao) {
-        Aventureiro aventureiro = aventureiroRepository.findById(
+        Aventureiro aventureiro = essencialNomeDto.findById(
                         participacao.getAventureiro().getId())
                 .orElseThrow(() -> new RuntimeException("Aventureiro não encontrado"));
 

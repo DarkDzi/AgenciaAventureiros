@@ -3,14 +3,18 @@ package TP1.example.Aventura.Controller;
 import TP1.example.Aventura.Domain.Aventureiro;
 import TP1.example.Aventura.Domain.Classe;
 import TP1.example.Aventura.Domain.Companheiro;
+import TP1.example.Aventura.Domain.StatusAventureiro;
+import TP1.example.Aventura.Dto.EssencialNomeDto;
+import TP1.example.Aventura.Dto.PerfilCompletoDto;
 import TP1.example.Aventura.Service.AventureiroService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.Collections;
-import java.util.List;
+
 
 @RestController
 @RequestMapping("/aventureiros")
@@ -20,28 +24,60 @@ public class AventureiroController {
     private final AventureiroService service;
 
     @GetMapping
-    public ResponseEntity<List<Aventureiro>> listarTodos() {
-        return ResponseEntity.ok(service.ListarTodos());
+    public ResponseEntity<Page<Aventureiro>> listarTodos(
+            @RequestParam (defaultValue = "0") int page,
+            @RequestParam (defaultValue = "10") int size
+                        ){
+        return ResponseEntity.ok(service.ListarTodos(page, size));
     }
 
     @GetMapping("/classe/{classe}")
-    public ResponseEntity<List<Aventureiro>> listarPorClasse(@PathVariable String classe) {
-        try {
-            Classe classeEnum = Classe.valueOf(classe.trim().toUpperCase());
-            return ResponseEntity.ok(service.ListarPorClasse(classeEnum));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Collections.emptyList());
-        }
+    public ResponseEntity<Page<Aventureiro>> listarPorClasse(
+            @PathVariable String classe,
+            @RequestParam (defaultValue = "0") int page,
+            @RequestParam (defaultValue = "10") int size
+            ) {
+            Classe classeenum = Classe.valueOf(classe);
+            return ResponseEntity.ok(service.ListarPorClasse(classeenum,page, size));
     }
 
-    @GetMapping("/nivel/{nivel}")
-    public ResponseEntity<List<Aventureiro>> listarPorNivel(@PathVariable Integer nivel) {
-        return ResponseEntity.ok(service.ListarPorNivelMaiorQue(nivel));
+    @GetMapping("/nivel_min/{nivel}")
+    public ResponseEntity<Page<Aventureiro>> listarPorNivelMin(
+            @PathVariable Integer nivel,
+            @RequestParam (defaultValue = "0") int page,
+            @RequestParam (defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(service.ListarPorNivelMaiorQue(nivel, page, size));
+
+    }
+
+
+    @GetMapping("/status/{status}")
+    public ResponseEntity<Page<Aventureiro>> listarPorStatus(
+            @PathVariable StatusAventureiro status,
+            @RequestParam (defaultValue = "0") int page,
+            @RequestParam (defaultValue = "10") int size
+            ) {
+        return ResponseEntity.ok(service.ListarPorStatus(status,page, size));
+    }
+    @GetMapping("/nome/{nome}")
+    public ResponseEntity<Page<EssencialNomeDto>> listarPorNome(
+            @PathVariable String nome,
+            @RequestParam (defaultValue = "0") int page,
+            @RequestParam (defaultValue = "10") int size,
+            @RequestParam (defaultValue = "true") boolean crescente
+    )
+    {
+        return ResponseEntity.ok(service.ListarPorNome(nome, page, size,crescente));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Aventureiro> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(service.BuscarPorId(id));
+    }
+    @GetMapping("/perfil/{id}")
+    public ResponseEntity<PerfilCompletoDto> buscarPerfilporId(@PathVariable Long id) {
+        return ResponseEntity.ok(service.ListarPerfilCompleto(id));
     }
 
     @PostMapping
