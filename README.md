@@ -1,6 +1,6 @@
 # 🗡️ Guilda dos Aventureiros
  
-API REST desenvolvida com **Spring Boot**, **PostgreSQL** e **Elasticsearch** para gerenciamento de aventureiros, missões e um marketplace de produtos em um universo de fantasia.
+API REST desenvolvida com **Spring Boot**, **PostgreSQL** e **Elasticsearch** para gerenciamento de aventureiros, missões e um marketplace.
  
 ---
  
