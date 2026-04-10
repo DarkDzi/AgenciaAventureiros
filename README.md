@@ -17,7 +17,10 @@ Na TP1_AgenciaAventureiros/demo, execute:
 
  
 ```bash
-docker compose up --build
+docker compose up -d db
+docker exec -it TP2_SpringBoot bash
+psql -U postgres -c "ALTER USER postgres WITH PASSWORD '123';"
+docker compose up -d --no-deps app elastic
 ```
  
 Isso irá subir automaticamente:
