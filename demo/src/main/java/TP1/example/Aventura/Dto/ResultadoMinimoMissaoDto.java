@@ -13,9 +13,9 @@ import java.sql.Timestamp;
 public class ResultadoMinimoMissaoDto {
     private Long id;
     private String Titulo;
-    private StatusMissao status;
-    private NiveldePerigo nivel;
-    private Timestamp iniciadoem;
-    private Timestamp terminadoem;
-    private Timestamp começadoem;
+    private String status;
+    private String nivel;
+    private String iniciadoem;
+    private String terminadoem;
+    private String começadoem;
 }

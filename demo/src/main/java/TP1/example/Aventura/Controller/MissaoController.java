@@ -4,6 +4,7 @@ import TP1.example.Aventura.Domain.Missao;
 import TP1.example.Aventura.Domain.NiveldePerigo;
 import TP1.example.Aventura.Domain.StatusMissao;
 import TP1.example.Aventura.Dto.MissaoEspecificaDto;
+import TP1.example.Aventura.Dto.MissaoTudo;
 import TP1.example.Aventura.Dto.ResultadoMinimoMissaoDto;
 import TP1.example.Aventura.Service.MissaoService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @RestController
@@ -21,44 +23,52 @@ public class MissaoController {
     private final MissaoService missaoService;
 
     @GetMapping
-    public Page<Missao> listarTodos(
+    public Page<MissaoTudo> listarTodos(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return missaoService.ListarTodos(page, size);
     }
 
     @GetMapping("/nivel/{nivel}")
-    public Page<Missao> listarPorNivel(
-            @PathVariable NiveldePerigo nivel,
+    public Page<MissaoTudo> listarPorNivel(
+            @PathVariable String nivel,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return missaoService.ListarPorNivel(nivel, page, size);
+        NiveldePerigo niveleenum = NiveldePerigo.valueOf(nivel.toUpperCase());
+        return missaoService.ListarPorNivel(niveleenum, page, size);
     }
 
     @GetMapping("/status/{status}")
-    public Page<Missao> listarPorStatus(
+    public Page<MissaoTudo> listarPorStatus(
             @PathVariable StatusMissao status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return missaoService.ListarPorStatus(status, page, size);
+        StatusMissao statusenum = StatusMissao.valueOf(status.name());
+        return missaoService.ListarPorStatus(statusenum, page, size);
     }
 
     @GetMapping("/criacao")
     public Page<ResultadoMinimoMissaoDto> listarPorIntervaloDeCriacao(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime inicio,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fim,
+            @RequestParam  LocalDateTime inicio,
+            @RequestParam  LocalDateTime fim,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return missaoService.ListarPorIntervaloDeCricao(inicio, fim, page, size);
+        Timestamp iniciostamp = Timestamp.valueOf(inicio);
+        Timestamp fimstamp = Timestamp.valueOf(fim);
+        return missaoService.ListarPorIntervaloDeCricao(iniciostamp, fimstamp, page, size);
     }
 
     @GetMapping("/periodo")
     public Page<ResultadoMinimoMissaoDto> listarPorIntervaloDeComecoeFim(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime inicio,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fim,
+            @RequestParam  LocalDateTime inicio,
+            @RequestParam  LocalDateTime fim,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return missaoService.ListarPorIntervaloDeComecoeFim(inicio, fim, page, size);
+        Timestamp iniciostamp = Timestamp.valueOf(inicio);
+        Timestamp fimstamp = Timestamp.valueOf(fim);
+
+
+        return missaoService.ListarPorIntervaloDeComecoeFim(iniciostamp, fimstamp, page, size);
     }
 
     @GetMapping("/{id}")

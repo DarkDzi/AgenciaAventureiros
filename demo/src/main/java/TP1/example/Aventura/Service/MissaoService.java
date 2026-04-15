@@ -5,17 +5,19 @@ import TP1.example.Aventura.Domain.NiveldePerigo;
 import TP1.example.Aventura.Domain.ParticipacaoMissao;
 import TP1.example.Aventura.Domain.StatusMissao;
 import TP1.example.Aventura.Dto.MissaoEspecificaDto;
+import TP1.example.Aventura.Dto.MissaoTudo;
 import TP1.example.Aventura.Dto.ParcipanteMissaoEspecificaDto;
 import TP1.example.Aventura.Dto.ResultadoMinimoMissaoDto;
 import TP1.example.Aventura.OrganizacaoValidator;
 import TP1.example.Aventura.Repository.MissaoRepository;
 import TP1.example.Aventura.Repository.ParticipacaoMissaoRepository;
+import TP1.example.Aventura.Utils.FormatarTimeStamp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,40 +30,69 @@ public class MissaoService {
     private final ParticipacaoMissaoRepository participacaoMissaoRepository;
     private final OrganizacaoValidator organizacaoValidator;
 
-    public Page<Missao> ListarTodos(int page, int size) {
-        return missaoRepository.findAll(PageRequest.of(page, size));
+    public Page<MissaoTudo> ListarTodos(int page, int size) {
+        return missaoRepository.findAll(PageRequest.of(page, size))
+                .map(m -> new MissaoTudo(
+                        m.getId(),
+                        m.getOrganizacao().getNome(),
+                        m.getTitulo(),
+                        m.getNivelPerigo().name(),
+                        m.getStatus().name(),
+                        FormatarTimeStamp.TimeStampParaString(m.getIniciadaem()),
+                        FormatarTimeStamp.TimeStampParaString(m.getTerminadaem()),
+                        FormatarTimeStamp.TimeStampParaString(m.getCriadoem())
+                ));
     }
 
-    public Page<Missao> ListarPorNivel(NiveldePerigo nivel, int page, int size) {
-        return missaoRepository.findBynivelPerigo(nivel, PageRequest.of(page, size));
+    public Page<MissaoTudo> ListarPorNivel(NiveldePerigo nivel, int page, int size) {
+        return missaoRepository.findBynivelPerigo(nivel, PageRequest.of(page, size))
+                .map(m -> new MissaoTudo(
+                m.getId(),
+                m.getOrganizacao().getNome(),
+                m.getTitulo(),
+                m.getNivelPerigo().name(),
+                m.getStatus().name(),
+                FormatarTimeStamp.TimeStampParaString(m.getIniciadaem()),
+                FormatarTimeStamp.TimeStampParaString(m.getTerminadaem()),
+                FormatarTimeStamp.TimeStampParaString(m.getCriadoem())
+        ));
     }
 
-    public Page<Missao> ListarPorStatus(StatusMissao status,int page, int size) {
-        return missaoRepository.findByStatus(status, PageRequest.of(page, size));
+    public Page<MissaoTudo> ListarPorStatus(StatusMissao status,int page, int size) {
+        return missaoRepository.findByStatus(status, PageRequest.of(page, size)).map(m -> new MissaoTudo(
+                m.getId(),
+                m.getOrganizacao().getNome(),
+                m.getTitulo(),
+                m.getNivelPerigo().name(),
+                m.getStatus().name(),
+                FormatarTimeStamp.TimeStampParaString(m.getIniciadaem()),
+                FormatarTimeStamp.TimeStampParaString(m.getTerminadaem()),
+                FormatarTimeStamp.TimeStampParaString(m.getCriadoem())
+        ));
     }
-    public Page<ResultadoMinimoMissaoDto> ListarPorIntervaloDeCricao(LocalDateTime inicio, LocalDateTime fim, int page, int size){
+    public Page<ResultadoMinimoMissaoDto> ListarPorIntervaloDeCricao(Timestamp inicio, Timestamp fim, int page, int size){
         return missaoRepository.findByCriadoemBetween(inicio, fim, PageRequest.of(page, size))
                 .map(a -> new ResultadoMinimoMissaoDto(
                         a.getId(),
                         a.getTitulo(),
-                        a.getStatus(),
-                        a.getNivelPerigo(),
-                        a.getIniciadaem(),
-                        a.getTerminadaem(),
-                        a.getCriadoem()
+                        a.getStatus().name(),
+                        a.getNivelPerigo().name(),
+                        FormatarTimeStamp.TimeStampParaString(a.getIniciadaem()),
+                        FormatarTimeStamp.TimeStampParaString(a.getTerminadaem()),
+                        FormatarTimeStamp.TimeStampParaString(a.getCriadoem())
                 ));
     }
-    public Page<ResultadoMinimoMissaoDto> ListarPorIntervaloDeComecoeFim(LocalDateTime inicio, LocalDateTime fim, int page, int size) {
-        return missaoRepository.findByIniciadaemGreaterThanEqualAndTerminadaemLessThanEqual(
+    public Page<ResultadoMinimoMissaoDto> ListarPorIntervaloDeComecoeFim(Timestamp inicio, Timestamp fim, int page, int size) {
+        return missaoRepository.findByPeriodo(
                         inicio, fim, PageRequest.of(page, size))
                 .map(a -> new ResultadoMinimoMissaoDto(
                         a.getId(),
                         a.getTitulo(),
-                        a.getStatus(),
-                        a.getNivelPerigo(),
-                        a.getIniciadaem(),
-                        a.getTerminadaem(),
-                        a.getCriadoem()
+                        a.getStatus().name(),
+                        a.getNivelPerigo().name(),
+                        FormatarTimeStamp.TimeStampParaString(a.getIniciadaem()),
+                        FormatarTimeStamp.TimeStampParaString(a.getTerminadaem()),
+                        FormatarTimeStamp.TimeStampParaString(a.getCriadoem())
                 ));
     }
 
@@ -85,13 +116,13 @@ public class MissaoService {
 
       return new MissaoEspecificaDto(
               a.getId(),
-              a.getOrganizacao(),
+              a.getOrganizacao().getNome(),
               a.getTitulo(),
               a.getNivelPerigo(),
               a.getStatus(),
-              a.getCriadoem(),
-              a.getIniciadaem(),
-              a.getTerminadaem(),
+              FormatarTimeStamp.TimeStampParaString(a.getCriadoem()),
+              FormatarTimeStamp.TimeStampParaString(a.getIniciadaem()),
+              FormatarTimeStamp.TimeStampParaString(a.getTerminadaem()),
               participantespapel,
               recompensageral,
               mvps

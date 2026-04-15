@@ -1,9 +1,12 @@
 package TP1.example.Aventura.Service;
 
 import TP1.example.Aventura.Domain.*;
+import TP1.example.Aventura.Dto.AventureiroTudo;
 import TP1.example.Aventura.Dto.PerfilCompletoDto;
+import TP1.example.Aventura.OrganizacaoValidator;
 import TP1.example.Aventura.Repository.AventureiroRepository;
 import TP1.example.Aventura.Repository.ParticipacaoMissaoRepository;
+import TP1.example.Aventura.Utils.FormatarTimeStamp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +14,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -24,20 +31,72 @@ public class AventureiroService {
     private final ParticipacaoMissaoRepository participacaoMissaoRepository;
 
 
-    public Page<Aventureiro> ListarTodos(int page, int size) {
-        return repository.findAll(PageRequest.of(page, size));
+    public Page<AventureiroTudo> ListarTodos(int page, int size) {
+        return repository.findAll(PageRequest.of(page, size))
+                .map(a -> new AventureiroTudo(
+                        a.getId(),
+                        a.getOrganizacao().getId(),
+                        a.getUsuarioResponsavel().getNome(),
+                        a.getNome(),
+                        a.getClasse(),
+                        a.getNivel(),
+                        a.getStatus(),
+                        a.getCompanheiro() != null ? a.getCompanheiro().getNome() : "Não Informado",
+                        FormatarTimeStamp.TimeStampParaString(a.getCriadoem()),
+                        FormatarTimeStamp.TimeStampParaString(a.getAtualizadoem())
+                        )
+                );
     }
 
-    public Page<Aventureiro> ListarPorClasse(Classe classe,int page, int size) {
-        return repository.findByClasse(classe, PageRequest.of(page, size));
+    public Page<AventureiroTudo> ListarPorClasse(Classe classe,int page, int size) {
+        return repository.findByClasse(classe, PageRequest.of(page, size))
+                .map(a -> new AventureiroTudo(
+                        a.getId(),
+                        a.getOrganizacao().getId(),
+                        a.getUsuarioResponsavel().getNome(),
+                        a.getNome(),
+                        a.getClasse(),
+                        a.getNivel(),
+                        a.getStatus(),
+                        a.getCompanheiro() != null ? a.getCompanheiro().getNome() : "Não Informado",
+                        FormatarTimeStamp.TimeStampParaString(a.getCriadoem()),
+                        FormatarTimeStamp.TimeStampParaString(a.getAtualizadoem())
+                )
+                );
     }
 
-    public Page<Aventureiro> ListarPorNivelMaiorQue(Integer nivel,int page, int size) {
-        return repository.findByNivelGreaterThan(nivel, PageRequest.of(page, size));
+    public Page<AventureiroTudo> ListarPorNivelMaiorQue(Integer nivel,int page, int size) {
+        return repository.findByNivelGreaterThan((nivel - 1), PageRequest.of(page, size))
+                .map(a -> new AventureiroTudo(
+                        a.getId(),
+                        a.getOrganizacao().getId(),
+                        a.getUsuarioResponsavel().getNome(),
+                        a.getNome(),
+                        a.getClasse(),
+                        a.getNivel(),
+                        a.getStatus(),
+                        a.getCompanheiro() != null ? a.getCompanheiro().getNome() : "Não Informado",
+                        FormatarTimeStamp.TimeStampParaString(a.getCriadoem()),
+                        FormatarTimeStamp.TimeStampParaString(a.getAtualizadoem())
+                )
+        );
     }
 
-    public Page<Aventureiro> ListarPorStatus(StatusAventureiro status,int page, int size) {
-        return repository.findByStatus(status, PageRequest.of(page, size));
+    public Page<AventureiroTudo> ListarPorStatus(StatusAventureiro status,int page, int size) {
+        return repository.findByStatus(status, PageRequest.of(page, size))
+                .map(a -> new AventureiroTudo(
+                        a.getId(),
+                        a.getOrganizacao().getId(),
+                        a.getUsuarioResponsavel().getNome(),
+                        a.getNome(),
+                        a.getClasse(),
+                        a.getNivel(),
+                        a.getStatus(),
+                        a.getCompanheiro() != null ? a.getCompanheiro().getNome() : "Não Informado",
+                        FormatarTimeStamp.TimeStampParaString(a.getCriadoem()),
+                        FormatarTimeStamp.TimeStampParaString(a.getAtualizadoem())
+                )
+        );
 
     }
     public Page<TP1.example.Aventura.Dto.EssencialNomeDto> ListarPorNome(String nome, int page, int size, boolean crescente) {
@@ -72,9 +131,9 @@ public class AventureiroService {
                   a.getClasse(),
                   a.getNivel(),
                   a.getStatus(),
-                  a.getCompanheiro(),
+                  a.getCompanheiro() != null ? a.getCompanheiro().getNome() : "Não Informado",
                   totalparticipacaoMissao,
-                  ultimamissao
+                  ultimamissao.getTitulo()
 
 
           );

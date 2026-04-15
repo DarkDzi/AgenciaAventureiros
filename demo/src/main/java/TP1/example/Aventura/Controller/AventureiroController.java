@@ -4,6 +4,7 @@ import TP1.example.Aventura.Domain.Aventureiro;
 import TP1.example.Aventura.Domain.Classe;
 import TP1.example.Aventura.Domain.Companheiro;
 import TP1.example.Aventura.Domain.StatusAventureiro;
+import TP1.example.Aventura.Dto.AventureiroTudo;
 import TP1.example.Aventura.Dto.EssencialNomeDto;
 import TP1.example.Aventura.Dto.PerfilCompletoDto;
 import TP1.example.Aventura.Service.AventureiroService;
@@ -24,7 +25,7 @@ public class AventureiroController {
     private final AventureiroService service;
 
     @GetMapping
-    public ResponseEntity<Page<Aventureiro>> listarTodos(
+    public ResponseEntity<Page<AventureiroTudo>> listarTodos(
             @RequestParam (defaultValue = "0") int page,
             @RequestParam (defaultValue = "10") int size
                         ){
@@ -32,17 +33,17 @@ public class AventureiroController {
     }
 
     @GetMapping("/classe/{classe}")
-    public ResponseEntity<Page<Aventureiro>> listarPorClasse(
+    public ResponseEntity<Page<AventureiroTudo>> listarPorClasse(
             @PathVariable String classe,
             @RequestParam (defaultValue = "0") int page,
             @RequestParam (defaultValue = "10") int size
             ) {
-            Classe classeenum = Classe.valueOf(classe);
+            Classe classeenum = Classe.valueOf(classe.toUpperCase());
             return ResponseEntity.ok(service.ListarPorClasse(classeenum,page, size));
     }
 
     @GetMapping("/nivel_min/{nivel}")
-    public ResponseEntity<Page<Aventureiro>> listarPorNivelMin(
+    public ResponseEntity<Page<AventureiroTudo>> listarPorNivelMin(
             @PathVariable Integer nivel,
             @RequestParam (defaultValue = "0") int page,
             @RequestParam (defaultValue = "10") int size
@@ -53,12 +54,13 @@ public class AventureiroController {
 
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<Page<Aventureiro>> listarPorStatus(
-            @PathVariable StatusAventureiro status,
+    public ResponseEntity<Page<AventureiroTudo>> listarPorStatus(
+            @PathVariable String status,
             @RequestParam (defaultValue = "0") int page,
             @RequestParam (defaultValue = "10") int size
             ) {
-        return ResponseEntity.ok(service.ListarPorStatus(status,page, size));
+        StatusAventureiro statuseenum = StatusAventureiro.valueOf(status.toUpperCase());
+        return ResponseEntity.ok(service.ListarPorStatus(statuseenum,page, size));
     }
     @GetMapping("/nome/{nome}")
     public ResponseEntity<Page<EssencialNomeDto>> listarPorNome(
@@ -69,11 +71,6 @@ public class AventureiroController {
     )
     {
         return ResponseEntity.ok(service.ListarPorNome(nome, page, size,crescente));
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Aventureiro> buscarPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(service.BuscarPorId(id));
     }
     @GetMapping("/perfil/{id}")
     public ResponseEntity<PerfilCompletoDto> buscarPerfilporId(@PathVariable Long id) {
@@ -96,11 +93,12 @@ public class AventureiroController {
         if (novosDados.getClasse() != null) {
             service.AtualizarClasse(id, novosDados.getClasse());
         }
-        if (novosDados.getNivel() != null) {
-            service.AtualizarNivel(id, novosDados.getNivel());
+            if (novosDados.getNivel() != null) {
+                service.AtualizarNivel(id, novosDados.getNivel());
+            }
+            return ResponseEntity.ok(service.BuscarPorId(id));
         }
-        return ResponseEntity.ok(service.BuscarPorId(id));
-    }
+
 
     @PatchMapping("/{id}/encerrar")
     public ResponseEntity<Void> encerrar(@PathVariable Long id) {

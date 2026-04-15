@@ -18,13 +18,13 @@ import java.util.List;
 public class MissaoEspecificaDto {
 
     private Long id;
-    private Organizacoes organizacao;
+    private String organizacao;
     private String titulo;
     private NiveldePerigo nivelPerigo;
     private StatusMissao status;
-    private Timestamp criadoem;
-    private Timestamp iniciadaem;
-    private Timestamp terminadaem;
+    private String criadoem;
+    private String iniciadaem;
+    private String terminadaem;
     private List<ParcipanteMissaoEspecificaDto> parcipantesepapel;
     private Integer recompensa_ouro;
     private List<String> mvps;

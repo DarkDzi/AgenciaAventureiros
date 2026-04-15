@@ -11,6 +11,7 @@ import TP1.example.Aventura.Repository.ParticipacaoMissaoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -25,23 +26,10 @@ public class RelatoriosService {
     private final ParticipacaoMissaoRepository participacaoMissaoRepository;
     private final MissaoRepository missaoRepository;
 
-    public List<RankingAventureiroDto> gerarRankingParticipacao(
-            LocalDateTime inicio,
-            LocalDateTime fim,
-            StatusMissao statusMissao) {
-
-        Timestamp tsInicio = Timestamp.valueOf(inicio);
-        Timestamp tsFim = Timestamp.valueOf(fim);
-
-        List<ParticipacaoMissao> participacoes = participacaoMissaoRepository.findAll()
-                .stream()
-                .filter(p -> !p.getCriadoem().before(tsInicio) && !p.getCriadoem().after(tsFim))
-                .filter(p -> statusMissao == null || p.getMissao().getStatus() == statusMissao)
-                .collect(Collectors.toList());
-
+    public List<RankingAventureiroDto> gerarRankingParticipacao(Timestamp inicio, Timestamp fim, StatusMissao status) {
+        List<ParticipacaoMissao> participacoes = participacaoMissaoRepository.buscarParaRanking(inicio, fim, status);
         return construirRanking(participacoes);
     }
-
     private List<RankingAventureiroDto> construirRanking(List<ParticipacaoMissao> participacoes) {
         Map<Long, RankingAventureiroDto> ranking = acumularMetricas(participacoes);
 

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,7 +24,9 @@ public class RelatoriosController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime inicio,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fim,
             @RequestParam(required = false) StatusMissao statusMissao) {
-        return relatoriosService.gerarRankingParticipacao(inicio, fim, statusMissao);
+        Timestamp iniciotimestamp = Timestamp.valueOf(inicio);
+        Timestamp fimtimestamp = Timestamp.valueOf(fim);
+        return relatoriosService.gerarRankingParticipacao(iniciotimestamp, fimtimestamp, statusMissao);
     }
 
     @GetMapping("/missoes")

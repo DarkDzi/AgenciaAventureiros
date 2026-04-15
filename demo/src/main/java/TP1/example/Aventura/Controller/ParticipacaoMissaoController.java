@@ -2,8 +2,10 @@ package TP1.example.Aventura.Controller;
 
 import TP1.example.Aventura.Domain.ParticipacaoMissao;
 import TP1.example.Aventura.Domain.PapelMissao;
+import TP1.example.Aventura.Dto.ParticipacaoTudo;
 import TP1.example.Aventura.Service.ParticipacaoMissaoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,15 +16,32 @@ import java.util.List;
 public class ParticipacaoMissaoController {
 
     private final ParticipacaoMissaoService participacaoMissaoService;
+    @GetMapping
+    public Page<ParticipacaoTudo> ListarTodos(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return participacaoMissaoService.ListarTodos(page, size);
+    }
 
     @GetMapping("/missao/{missaoId}")
-    public List<ParticipacaoMissao> listarPorMissao(@PathVariable Long missaoId) {
-        return participacaoMissaoService.ListarPorMissao(missaoId);
+    public Page<ParticipacaoTudo> listarPorMissao(
+            @PathVariable Long missaoId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+            ) {
+        return participacaoMissaoService.ListarPorMissao(missaoId, page, size);
     }
 
     @GetMapping("/aventureiro/{aventureiroId}")
-    public List<ParticipacaoMissao> listarPorAventureiro(@PathVariable Long aventureiroId) {
-        return participacaoMissaoService.ListarPorAventureiro(aventureiroId);
+    public Page<ParticipacaoTudo> listarPorAventureiro(
+            @PathVariable Long aventureiroId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+
+
+    ) {
+        return participacaoMissaoService.ListarPorAventureiro(aventureiroId, page ,size);
     }
 
     @PostMapping

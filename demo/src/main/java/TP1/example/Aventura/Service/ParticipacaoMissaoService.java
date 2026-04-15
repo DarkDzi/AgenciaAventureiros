@@ -1,11 +1,15 @@
 package TP1.example.Aventura.Service;
 
 import TP1.example.Aventura.Domain.*;
+import TP1.example.Aventura.Dto.ParticipacaoTudo;
 import TP1.example.Aventura.OrganizacaoValidator;
 import TP1.example.Aventura.Repository.AventureiroRepository;
 import TP1.example.Aventura.Repository.MissaoRepository;
 import TP1.example.Aventura.Repository.ParticipacaoMissaoRepository;
+import TP1.example.Aventura.Utils.FormatarTimeStamp;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,12 +23,39 @@ public class ParticipacaoMissaoService {
     private final AventureiroRepository essencialNomeDto;
     private final OrganizacaoValidator organizacaoValidator;
 
-    public List<ParticipacaoMissao> ListarPorMissao(Long missaoId) {
-        return participacaoRepository.findByMissaoId(missaoId);
+    public Page<ParticipacaoTudo> ListarTodos(int page, int size) {
+        return participacaoRepository.findAll(PageRequest.of(page, size))
+                .map(p -> new ParticipacaoTudo(
+                        p.getMissao().getTitulo(),
+                        p.getAventureiro().getNome(),
+                        p.getPapel().name(),
+                        p.getRecompensaOuro(),
+                        p.getMvp(),
+                        FormatarTimeStamp.TimeStampParaString(p.getCriadoem())
+                ));
+    }
+    public Page<ParticipacaoTudo> ListarPorMissao(Long missaoId, int page, int size) {
+        return participacaoRepository.findByMissaoId(missaoId, PageRequest.of(page, size))
+                .map(p -> new ParticipacaoTudo(
+                        p.getMissao().getTitulo(),
+                        p.getAventureiro().getNome(),
+                        p.getPapel().name(),
+                        p.getRecompensaOuro(),
+                        p.getMvp(),
+                        FormatarTimeStamp.TimeStampParaString(p.getCriadoem())
+                ));
     }
 
-    public List<ParticipacaoMissao> ListarPorAventureiro(Long aventureiroId) {
-        return participacaoRepository.findByAventureiroId(aventureiroId);
+    public Page<ParticipacaoTudo> ListarPorAventureiro(Long aventureiroId, int page, int size) {
+        return participacaoRepository.findByAventureiroId(aventureiroId, PageRequest.of(page, size))
+                .map(p -> new ParticipacaoTudo(
+                        p.getMissao().getTitulo(),
+                        p.getAventureiro().getNome(),
+                        p.getPapel().name(),
+                        p.getRecompensaOuro(),
+                        p.getMvp(),
+                        FormatarTimeStamp.TimeStampParaString(p.getCriadoem())
+                ));
     }
 
     public ParticipacaoMissao Salvar(ParticipacaoMissao participacao) {
@@ -85,9 +116,6 @@ public class ParticipacaoMissaoService {
     }
 
     public void DefinirRecompensa(Long missaoId, Long aventureiroId, Integer ouro) {
-        if (ouro < 0) {
-            throw new RuntimeException("Recompensa não pode ser negativa");
-        }
         ParticipacaoMissaoId id = new ParticipacaoMissaoId(missaoId, aventureiroId);
         ParticipacaoMissao participacao = participacaoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Participação não encontrada"));
