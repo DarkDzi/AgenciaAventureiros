@@ -15,3 +15,6 @@ public class Tp1PbApplication {
 	}
 
 }
+
+//TODO arrumar handle para não usar só exeção runtime, arrumar jacksonconfig, tipos de cache, arrumar nome, conexões com o banco abrindo toda hora
+// arrumar uso de dto painel tático
