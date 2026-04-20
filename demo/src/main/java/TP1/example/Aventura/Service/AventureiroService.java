@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -32,7 +31,7 @@ public class AventureiroService {
 
 
 
-    public Page<AventureiroTudo> ListarTodos(int page, int size) {
+    public Page<AventureiroTudo> listarTodos(int page, int size) {
         return repository.findAll(PageRequest.of(page, size))
                 .map(a -> new AventureiroTudo(
                         a.getId(),
@@ -49,7 +48,7 @@ public class AventureiroService {
                 );
     }
 
-    public Page<AventureiroTudo> ListarPorClasse(Classe classe,int page, int size) {
+    public Page<AventureiroTudo> listarPorClasse(Classe classe, int page, int size) {
         return repository.findByClasse(classe, PageRequest.of(page, size))
                 .map(a -> new AventureiroTudo(
                         a.getId(),
@@ -66,7 +65,7 @@ public class AventureiroService {
                 );
     }
 
-    public Page<AventureiroTudo> ListarPorNivelMaiorQue(Integer nivel,int page, int size) {
+    public Page<AventureiroTudo> listarPorNivelMaiorQue(Integer nivel, int page, int size) {
         return repository.findByNivelGreaterThan((nivel - 1), PageRequest.of(page, size))
                 .map(a -> new AventureiroTudo(
                         a.getId(),
@@ -83,7 +82,7 @@ public class AventureiroService {
         );
     }
 
-    public Page<AventureiroTudo> ListarPorStatus(StatusAventureiro status,int page, int size) {
+    public Page<AventureiroTudo> listarPorStatus(StatusAventureiro status, int page, int size) {
         return repository.findByStatus(status, PageRequest.of(page, size))
                 .map(a -> new AventureiroTudo(
                         a.getId(),
@@ -100,7 +99,7 @@ public class AventureiroService {
         );
 
     }
-    public Page<EssencialNomeDto> ListarPorNome(String nome, int page, int size, boolean crescente) {
+    public Page<EssencialNomeDto> listarPorNome(String nome, int page, int size, boolean crescente) {
         Sort sort = crescente ? Sort.by("nome").ascending() : Sort.by("nome").descending();
         Pageable pageable = PageRequest.of(page, size,sort);
         return repository.findByNomeContaining(nome,pageable)
@@ -112,7 +111,7 @@ public class AventureiroService {
                         a.getStatus()
                 ));
     }
-    public PerfilCompletoDto ListarPerfilCompleto(Long id) {
+    public PerfilCompletoDto listarPerfilCompleto(Long id) {
             Aventureiro a = repository.findById(id)
                     .orElseThrow(() -> new EntityNotFoundException("Aventureiro não encontrado"));
             List<ParticipacaoMissao> participacoes = participacaoMissaoRepository.findByAventureiroId(id);
@@ -141,57 +140,57 @@ public class AventureiroService {
           );
     }
 
-    public Aventureiro BuscarPorId(Long id) {
+    public Aventureiro buscarPorId(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Aventureiro não encontrado"));
     }
 
 
-    public Aventureiro Salvar(Aventureiro aventureiro) {
+    public Aventureiro salvar(Aventureiro aventureiro) {
         return repository.save(aventureiro);
     }
 
-    public void Deletar(Long id) {
+    public void deletar(Long id) {
         repository.deleteById(id);
     }
 
     @Transactional()
-    public void AtualizarNome(Long id, String nome) {
+    public void atualizarNome(Long id, String nome) {
         Aventureiro aventureiro= repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Aventureiro não Encotrado"));
         aventureiro.setNome(nome);
         repository.save(aventureiro);
     }
     @Transactional()
-    public void AtualizarClasse(Long id, Classe classe) {
+    public void atualizarClasse(Long id, Classe classe) {
         Aventureiro aventureiro= repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Aventureiro não Encotrado"));
         aventureiro.setClasse(classe);
         repository.save(aventureiro);
     }
     @Transactional()
-    public void AtualizarNivel(Long id, Integer nivel) {
+    public void atualizarNivel(Long id, Integer nivel) {
         Aventureiro aventureiro= repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Aventureiro não Encotrado"));
         aventureiro.setNivel(nivel);
         repository.save(aventureiro);
     }
     @Transactional()
-    public void EncerrarVinculo(Long id) {
+    public void encerrarVinculo(Long id) {
         Aventureiro aventureiro= repository.findById(id)
                 .orElseThrow(() -> new  EntityNotFoundException("Aventureiro não Encotrado"));
         aventureiro.setStatus(StatusAventureiro.INATIVO);
         repository.save(aventureiro);
     }
     @Transactional()
-    public void RecrutarNovamente(Long id) {
+    public void recrutarNovamente(Long id) {
         Aventureiro aventureiro= repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Aventureiro não Encotrado"));
         aventureiro.setStatus(StatusAventureiro.ATIVO);
         repository.save(aventureiro);
     }
     @Transactional()
-    public void DefinirCompanheiro(Long id, Companheiro companheiro) {
+    public void definirCompanheiro(Long id, Companheiro companheiro) {
         Aventureiro aventureiro= repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Aventureiro não Encotrado"));
         companheiro.setAventureiro(aventureiro);
@@ -199,7 +198,7 @@ public class AventureiroService {
         repository.save(aventureiro);
     }
     @Transactional()
-    public void RemoverCompanheiro(Long id) {
+    public void removerCompanheiro(Long id) {
         Aventureiro aventureiro= repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Aventureiro não Encotrado"));
         aventureiro.setCompanheiro(null);

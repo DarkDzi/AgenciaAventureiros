@@ -9,7 +9,6 @@ import TP1.example.Aventura.Dto.ResultadoMinimoMissaoDto;
 import TP1.example.Aventura.Service.MissaoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
@@ -26,7 +25,7 @@ public class MissaoController {
     public Page<MissaoTudo> listarTodos(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return missaoService.ListarTodos(page, size);
+        return missaoService.listarTodos(page, size);
     }
 
     @GetMapping("/nivel/{nivel}")
@@ -35,7 +34,7 @@ public class MissaoController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         NiveldePerigo niveleenum = NiveldePerigo.valueOf(nivel.toUpperCase());
-        return missaoService.ListarPorNivel(niveleenum, page, size);
+        return missaoService.listarPorNivel(niveleenum, page, size);
     }
 
     @GetMapping("/status/{status}")
@@ -44,7 +43,7 @@ public class MissaoController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         StatusMissao statusenum = StatusMissao.valueOf(status.name());
-        return missaoService.ListarPorStatus(statusenum, page, size);
+        return missaoService.listarPorStatus(statusenum, page, size);
     }
 
     @GetMapping("/criacao")
@@ -55,7 +54,7 @@ public class MissaoController {
             @RequestParam(defaultValue = "10") int size) {
         Timestamp iniciostamp = Timestamp.valueOf(inicio);
         Timestamp fimstamp = Timestamp.valueOf(fim);
-        return missaoService.ListarPorIntervaloDeCricao(iniciostamp, fimstamp, page, size);
+        return missaoService.listarPorIntervaloDeCricao(iniciostamp, fimstamp, page, size);
     }
 
     @GetMapping("/periodo")
@@ -68,42 +67,42 @@ public class MissaoController {
         Timestamp fimstamp = Timestamp.valueOf(fim);
 
 
-        return missaoService.ListarPorIntervaloDeComecoeFim(iniciostamp, fimstamp, page, size);
+        return missaoService.listarPorIntervaloDeComecoeFim(iniciostamp, fimstamp, page, size);
     }
 
     @GetMapping("/{id}")
     public MissaoEspecificaDto buscarPorId(@PathVariable Long id) {
-        return missaoService.BuscarEspecificoPorId(id);
+        return missaoService.buscarEspecificoPorId(id);
     }
 
     @PostMapping
     public Missao salvar(@RequestBody Missao missao) {
-        return missaoService.Salvar(missao);
+        return missaoService.salvar(missao);
     }
 
     @DeleteMapping("/{id}")
     public void deletar(@PathVariable Long id) {
-        missaoService.Deletar(id);
+        missaoService.deletar(id);
     }
 
     @PatchMapping("/{id}/titulo")
     public void atualizarTitulo(
             @PathVariable Long id,
             @RequestParam String titulo) {
-        missaoService.AtualizarTitulo(id, titulo);
+        missaoService.atualizarTitulo(id, titulo);
     }
 
     @PatchMapping("/{id}/status")
     public void atualizarStatus(
             @PathVariable Long id,
             @RequestParam StatusMissao status) {
-        missaoService.AtualizarStatus(id, status);
+        missaoService.atualizarStatus(id, status);
     }
 
     @PatchMapping("/{id}/nivel-perigo")
     public void atualizarNivelPerigo(
             @PathVariable Long id,
             @RequestParam NiveldePerigo nivelPerigo) {
-        missaoService.AtualizarNivelPerigo(id, nivelPerigo);
+        missaoService.atualizarNivelPerigo(id, nivelPerigo);
     }
 }

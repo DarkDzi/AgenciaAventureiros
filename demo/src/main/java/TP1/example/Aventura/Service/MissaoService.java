@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +31,7 @@ public class MissaoService {
     private final ParticipacaoMissaoRepository participacaoMissaoRepository;
     private final OrganizacaoValidator organizacaoValidator;
 
-    public Page<MissaoTudo> ListarTodos(int page, int size) {
+    public Page<MissaoTudo> listarTodos(int page, int size) {
         return missaoRepository.findAll(PageRequest.of(page, size))
                 .map(m -> new MissaoTudo(
                         m.getId(),
@@ -46,7 +45,7 @@ public class MissaoService {
                 ));
     }
 
-    public Page<MissaoTudo> ListarPorNivel(NiveldePerigo nivel, int page, int size) {
+    public Page<MissaoTudo> listarPorNivel(NiveldePerigo nivel, int page, int size) {
         return missaoRepository.findBynivelPerigo(nivel, PageRequest.of(page, size))
                 .map(m -> new MissaoTudo(
                 m.getId(),
@@ -60,7 +59,7 @@ public class MissaoService {
         ));
     }
 
-    public Page<MissaoTudo> ListarPorStatus(StatusMissao status,int page, int size) {
+    public Page<MissaoTudo> listarPorStatus(StatusMissao status, int page, int size) {
         return missaoRepository.findByStatus(status, PageRequest.of(page, size)).map(m -> new MissaoTudo(
                 m.getId(),
                 m.getOrganizacao().getNome(),
@@ -72,7 +71,7 @@ public class MissaoService {
                 FormatarTimeStamp.TimeStampParaString(m.getCriadoem())
         ));
     }
-    public Page<ResultadoMinimoMissaoDto> ListarPorIntervaloDeCricao(Timestamp inicio, Timestamp fim, int page, int size){
+    public Page<ResultadoMinimoMissaoDto> listarPorIntervaloDeCricao(Timestamp inicio, Timestamp fim, int page, int size){
         return missaoRepository.findByCriadoemBetween(inicio, fim, PageRequest.of(page, size))
                 .map(a -> new ResultadoMinimoMissaoDto(
                         a.getId(),
@@ -84,7 +83,7 @@ public class MissaoService {
                         FormatarTimeStamp.TimeStampParaString(a.getCriadoem())
                 ));
     }
-    public Page<ResultadoMinimoMissaoDto> ListarPorIntervaloDeComecoeFim(Timestamp inicio, Timestamp fim, int page, int size) {
+    public Page<ResultadoMinimoMissaoDto> listarPorIntervaloDeComecoeFim(Timestamp inicio, Timestamp fim, int page, int size) {
         return missaoRepository.findByPeriodo(
                         inicio, fim, PageRequest.of(page, size))
                 .map(a -> new ResultadoMinimoMissaoDto(
@@ -101,7 +100,7 @@ public class MissaoService {
 
 
     @Transactional
-    public MissaoEspecificaDto BuscarEspecificoPorId(Long id) {
+    public MissaoEspecificaDto buscarEspecificoPorId(Long id) {
         Missao a = missaoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Missão não encontrada"));
         List<ParticipacaoMissao> pm = participacaoMissaoRepository.findByMissaoId(id);
@@ -131,30 +130,30 @@ public class MissaoService {
       );
     }
     @Transactional
-    public Missao Salvar(Missao missao) {
+    public Missao salvar(Missao missao) {
         organizacaoValidator.existe(missao.getOrganizacao().getId());
         return missaoRepository.save(missao);
     }
     @Transactional
-    public void Deletar(Long id) {
+    public void deletar(Long id) {
         missaoRepository.deleteById(id);
     }
     @Transactional
-    public void AtualizarTitulo(Long id, String titulo) {
+    public void atualizarTitulo(Long id, String titulo) {
         Missao missao = missaoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Missão não encontrada"));
         missao.setTitulo(titulo);
         missaoRepository.save(missao);
     }
     @Transactional
-    public void AtualizarStatus(Long id, StatusMissao status) {
+    public void atualizarStatus(Long id, StatusMissao status) {
         Missao missao = missaoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Missão não encontrada"));
         missao.setStatus(status);
         missaoRepository.save(missao);
     }
     @Transactional
-    public void AtualizarNivelPerigo(Long id, NiveldePerigo nivelPerigo) {
+    public void atualizarNivelPerigo(Long id, NiveldePerigo nivelPerigo) {
         Missao missao = missaoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Missão não encontrada"));
         missao.setNivelPerigo(nivelPerigo);

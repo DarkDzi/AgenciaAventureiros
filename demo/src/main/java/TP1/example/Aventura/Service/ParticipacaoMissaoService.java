@@ -14,8 +14,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class ParticipacaoMissaoService {
@@ -25,7 +23,7 @@ public class ParticipacaoMissaoService {
     private final AventureiroRepository essencialNomeDto;
     private final OrganizacaoValidator organizacaoValidator;
 
-    public Page<ParticipacaoTudo> ListarTodos(int page, int size) {
+    public Page<ParticipacaoTudo> listarTodos(int page, int size) {
         return participacaoRepository.findAll(PageRequest.of(page, size))
                 .map(p -> new ParticipacaoTudo(
                         p.getMissao().getTitulo(),
@@ -36,7 +34,7 @@ public class ParticipacaoMissaoService {
                         FormatarTimeStamp.TimeStampParaString(p.getCriadoem())
                 ));
     }
-    public Page<ParticipacaoTudo> ListarPorMissao(Long missaoId, int page, int size) {
+    public Page<ParticipacaoTudo> listarPorMissao(Long missaoId, int page, int size) {
         return participacaoRepository.findByMissaoId(missaoId, PageRequest.of(page, size))
                 .map(p -> new ParticipacaoTudo(
                         p.getMissao().getTitulo(),
@@ -48,7 +46,7 @@ public class ParticipacaoMissaoService {
                 ));
     }
 
-    public Page<ParticipacaoTudo> ListarPorAventureiro(Long aventureiroId, int page, int size) {
+    public Page<ParticipacaoTudo> listarPorAventureiro(Long aventureiroId, int page, int size) {
         return participacaoRepository.findByAventureiroId(aventureiroId, PageRequest.of(page, size))
                 .map(p -> new ParticipacaoTudo(
                         p.getMissao().getTitulo(),
@@ -60,7 +58,7 @@ public class ParticipacaoMissaoService {
                 ));
     }
     @Transactional
-    public ParticipacaoMissao Salvar(ParticipacaoMissao participacao) {
+    public ParticipacaoMissao salvar(ParticipacaoMissao participacao) {
         Aventureiro aventureiro = essencialNomeDto.findById(
                         participacao.getAventureiro().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Aventureiro não encontrado"));
@@ -93,7 +91,7 @@ public class ParticipacaoMissaoService {
         return participacaoRepository.save(participacao);
     }
     @Transactional
-    public void Deletar(Long missaoId, Long aventureiroId) {
+    public void deletar(Long missaoId, Long aventureiroId) {
         ParticipacaoMissaoId id = new ParticipacaoMissaoId(missaoId, aventureiroId);
         if (!participacaoRepository.existsById(id)) {
             throw new EntityNotFoundException("Participação não encontrada");
@@ -101,7 +99,7 @@ public class ParticipacaoMissaoService {
         participacaoRepository.deleteById(id);
     }
     @Transactional
-    public void AtualizarPapel(Long missaoId, Long aventureiroId, PapelMissao papel) {
+    public void atualizarPapel(Long missaoId, Long aventureiroId, PapelMissao papel) {
         ParticipacaoMissaoId id = new ParticipacaoMissaoId(missaoId, aventureiroId);
         ParticipacaoMissao participacao = participacaoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Participação não encontrada"));
@@ -109,7 +107,7 @@ public class ParticipacaoMissaoService {
         participacaoRepository.save(participacao);
     }
     @Transactional
-    public void DefinirMvp(Long missaoId, Long aventureiroId) {
+    public void definirMvp(Long missaoId, Long aventureiroId) {
         ParticipacaoMissaoId id = new ParticipacaoMissaoId(missaoId, aventureiroId);
         ParticipacaoMissao participacao = participacaoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Participação não encontrada"));
@@ -117,7 +115,7 @@ public class ParticipacaoMissaoService {
         participacaoRepository.save(participacao);
     }
     @Transactional
-    public void DefinirRecompensa(Long missaoId, Long aventureiroId, Integer ouro) {
+    public void definirRecompensa(Long missaoId, Long aventureiroId, Integer ouro) {
         ParticipacaoMissaoId id = new ParticipacaoMissaoId(missaoId, aventureiroId);
         ParticipacaoMissao participacao = participacaoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Participação não encontrada"));

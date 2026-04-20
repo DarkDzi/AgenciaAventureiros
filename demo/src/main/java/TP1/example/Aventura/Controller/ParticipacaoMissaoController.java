@@ -8,8 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/participacaomissao")
 @RequiredArgsConstructor
@@ -21,7 +19,7 @@ public class ParticipacaoMissaoController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return participacaoMissaoService.ListarTodos(page, size);
+        return participacaoMissaoService.listarTodos(page, size);
     }
 
     @GetMapping("/missao/{missaoId}")
@@ -30,7 +28,7 @@ public class ParticipacaoMissaoController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
             ) {
-        return participacaoMissaoService.ListarPorMissao(missaoId, page, size);
+        return participacaoMissaoService.listarPorMissao(missaoId, page, size);
     }
 
     @GetMapping("/aventureiro/{aventureiroId}")
@@ -41,19 +39,19 @@ public class ParticipacaoMissaoController {
 
 
     ) {
-        return participacaoMissaoService.ListarPorAventureiro(aventureiroId, page ,size);
+        return participacaoMissaoService.listarPorAventureiro(aventureiroId, page ,size);
     }
 
     @PostMapping
     public ParticipacaoMissao salvar(@RequestBody ParticipacaoMissao participacao) {
-        return participacaoMissaoService.Salvar(participacao);
+        return participacaoMissaoService.salvar(participacao);
     }
 
     @DeleteMapping("/{missaoId}/{aventureiroId}")
     public void deletar(
             @PathVariable Long missaoId,
             @PathVariable Long aventureiroId) {
-        participacaoMissaoService.Deletar(missaoId, aventureiroId);
+        participacaoMissaoService.deletar(missaoId, aventureiroId);
     }
 
     @PatchMapping("/{missaoId}/{aventureiroId}/papel")
@@ -61,14 +59,14 @@ public class ParticipacaoMissaoController {
             @PathVariable Long missaoId,
             @PathVariable Long aventureiroId,
             @RequestParam PapelMissao papel) {
-        participacaoMissaoService.AtualizarPapel(missaoId, aventureiroId, papel);
+        participacaoMissaoService.atualizarPapel(missaoId, aventureiroId, papel);
     }
 
     @PatchMapping("/{missaoId}/{aventureiroId}/mvp")
     public void definirMvp(
             @PathVariable Long missaoId,
             @PathVariable Long aventureiroId) {
-        participacaoMissaoService.DefinirMvp(missaoId, aventureiroId);
+        participacaoMissaoService.definirMvp(missaoId, aventureiroId);
     }
 
     @PatchMapping("/{missaoId}/{aventureiroId}/recompensa")
@@ -76,6 +74,6 @@ public class ParticipacaoMissaoController {
             @PathVariable Long missaoId,
             @PathVariable Long aventureiroId,
             @RequestParam Integer ouro) {
-        participacaoMissaoService.DefinirRecompensa(missaoId, aventureiroId, ouro);
+        participacaoMissaoService.definirRecompensa(missaoId, aventureiroId, ouro);
     }
 }

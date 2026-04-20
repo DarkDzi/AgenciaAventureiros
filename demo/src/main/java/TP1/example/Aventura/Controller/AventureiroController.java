@@ -10,7 +10,6 @@ import TP1.example.Aventura.Dto.PerfilCompletoDto;
 import TP1.example.Aventura.Service.AventureiroService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +28,7 @@ public class AventureiroController {
             @RequestParam (defaultValue = "0") int page,
             @RequestParam (defaultValue = "10") int size
                         ){
-        return ResponseEntity.ok(service.ListarTodos(page, size));
+        return ResponseEntity.ok(service.listarTodos(page, size));
     }
 
     @GetMapping("/classe/{classe}")
@@ -39,7 +38,7 @@ public class AventureiroController {
             @RequestParam (defaultValue = "10") int size
             ) {
             Classe classeenum = Classe.valueOf(classe.toUpperCase());
-            return ResponseEntity.ok(service.ListarPorClasse(classeenum,page, size));
+            return ResponseEntity.ok(service.listarPorClasse(classeenum,page, size));
     }
 
     @GetMapping("/nivel_min/{nivel}")
@@ -48,7 +47,7 @@ public class AventureiroController {
             @RequestParam (defaultValue = "0") int page,
             @RequestParam (defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok(service.ListarPorNivelMaiorQue(nivel, page, size));
+        return ResponseEntity.ok(service.listarPorNivelMaiorQue(nivel, page, size));
 
     }
 
@@ -60,7 +59,7 @@ public class AventureiroController {
             @RequestParam (defaultValue = "10") int size
             ) {
         StatusAventureiro statuseenum = StatusAventureiro.valueOf(status.toUpperCase());
-        return ResponseEntity.ok(service.ListarPorStatus(statuseenum,page, size));
+        return ResponseEntity.ok(service.listarPorStatus(statuseenum,page, size));
     }
     @GetMapping("/nome/{nome}")
     public ResponseEntity<Page<EssencialNomeDto>> listarPorNome(
@@ -70,16 +69,16 @@ public class AventureiroController {
             @RequestParam (defaultValue = "true") boolean crescente
     )
     {
-        return ResponseEntity.ok(service.ListarPorNome(nome, page, size,crescente));
+        return ResponseEntity.ok(service.listarPorNome(nome, page, size,crescente));
     }
     @GetMapping("/perfil/{id}")
     public ResponseEntity<PerfilCompletoDto> buscarPerfilporId(@PathVariable Long id) {
-        return ResponseEntity.ok(service.ListarPerfilCompleto(id));
+        return ResponseEntity.ok(service.listarPerfilCompleto(id));
     }
 
     @PostMapping
     public ResponseEntity<Aventureiro> registrar(@RequestBody Aventureiro aventureiro) {
-        Aventureiro salvo = service.Salvar(aventureiro);
+        Aventureiro salvo = service.salvar(aventureiro);
         URI location = URI.create("/aventureiros/" + salvo.getId());
         return ResponseEntity.created(location).body(salvo);
     }
@@ -88,46 +87,46 @@ public class AventureiroController {
     public ResponseEntity<Aventureiro> atualizar(@PathVariable Long id,
                                                  @RequestBody Aventureiro novosDados) {
         if (novosDados.getNome() != null) {
-            service.AtualizarNome(id, novosDados.getNome());
+            service.atualizarNome(id, novosDados.getNome());
         }
         if (novosDados.getClasse() != null) {
-            service.AtualizarClasse(id, novosDados.getClasse());
+            service.atualizarClasse(id, novosDados.getClasse());
         }
             if (novosDados.getNivel() != null) {
-                service.AtualizarNivel(id, novosDados.getNivel());
+                service.atualizarNivel(id, novosDados.getNivel());
             }
-            return ResponseEntity.ok(service.BuscarPorId(id));
+            return ResponseEntity.ok(service.buscarPorId(id));
         }
 
 
     @PatchMapping("/{id}/encerrar")
     public ResponseEntity<Void> encerrar(@PathVariable Long id) {
-        service.EncerrarVinculo(id);
+        service.encerrarVinculo(id);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/recrutar")
     public ResponseEntity<Void> recrutar(@PathVariable Long id) {
-        service.RecrutarNovamente(id);
+        service.recrutarNovamente(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/companheiro")
     public ResponseEntity<Aventureiro> definirCompanheiro(@PathVariable Long id,
                                                           @RequestBody Companheiro companheiro) {
-        service.DefinirCompanheiro(id, companheiro);
-        return ResponseEntity.ok(service.BuscarPorId(id));
+        service.definirCompanheiro(id, companheiro);
+        return ResponseEntity.ok(service.buscarPorId(id));
     }
 
     @DeleteMapping("/{id}/companheiro")
     public ResponseEntity<Void> removerCompanheiro(@PathVariable Long id) {
-        service.RemoverCompanheiro(id);
+        service.removerCompanheiro(id);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        service.Deletar(id);
+        service.deletar(id);
         return ResponseEntity.noContent().build();
     }
 }
