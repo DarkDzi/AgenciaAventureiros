@@ -12,10 +12,12 @@ import TP1.example.Aventura.OrganizacaoValidator;
 import TP1.example.Aventura.Repository.MissaoRepository;
 import TP1.example.Aventura.Repository.ParticipacaoMissaoRepository;
 import TP1.example.Aventura.Utils.FormatarTimeStamp;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -98,10 +100,10 @@ public class MissaoService {
 
 
 
-
+    @Transactional
     public MissaoEspecificaDto BuscarEspecificoPorId(Long id) {
-        Optional<Missao> opta = missaoRepository.findById(id);
-        Missao a = opta.orElse(null);
+        Missao a = missaoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Missão não encontrada"));
         List<ParticipacaoMissao> pm = participacaoMissaoRepository.findByMissaoId(id);
         List<ParcipanteMissaoEspecificaDto> participantespapel = new ArrayList<>();
         List<String> mvps = new ArrayList<>();
@@ -128,34 +130,33 @@ public class MissaoService {
               mvps
       );
     }
-    public Missao BuscarPorId(Long id) {
-      return missaoRepository.findById(id).orElse(null);
-    };
-
+    @Transactional
     public Missao Salvar(Missao missao) {
         organizacaoValidator.existe(missao.getOrganizacao().getId());
         return missaoRepository.save(missao);
     }
-
+    @Transactional
     public void Deletar(Long id) {
-        BuscarPorId(id);
         missaoRepository.deleteById(id);
     }
-
+    @Transactional
     public void AtualizarTitulo(Long id, String titulo) {
-        Missao missao = BuscarPorId(id);
+        Missao missao = missaoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Missão não encontrada"));
         missao.setTitulo(titulo);
         missaoRepository.save(missao);
     }
-
+    @Transactional
     public void AtualizarStatus(Long id, StatusMissao status) {
-        Missao missao = BuscarPorId(id);
+        Missao missao = missaoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Missão não encontrada"));
         missao.setStatus(status);
         missaoRepository.save(missao);
     }
-
+    @Transactional
     public void AtualizarNivelPerigo(Long id, NiveldePerigo nivelPerigo) {
-        Missao missao = BuscarPorId(id);
+        Missao missao = missaoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Missão não encontrada"));
         missao.setNivelPerigo(nivelPerigo);
         missaoRepository.save(missao);
     }

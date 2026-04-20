@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 public class CacheScheduler {
     private final PainelTaticoMissaoService Service;
     //Toda vez que fazer a busca guarda o resultado em cache e com @Schedule a cada 1minuto exucuta o atualizarcache que chama o limpar e deposi buscar
-    @Scheduled(fixedRate =  5 * 60000) //60000milisegundos = 1minuto
+    @Scheduled(fixedRate = 15 * (24 * (60 * 60000))) //60000milisegundos = 1minuto
     public void atualizarCacher(){
         Service.limparcache();
-        Service.buscarTop10Ultimos15Dias();
+        Service.buscarTop10Ultimos15Dias(0, 10);
     }
 }

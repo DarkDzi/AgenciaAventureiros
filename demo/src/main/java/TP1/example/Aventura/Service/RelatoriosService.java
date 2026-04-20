@@ -5,7 +5,6 @@ import TP1.example.Aventura.Domain.ParticipacaoMissao;
 import TP1.example.Aventura.Domain.StatusMissao;
 import TP1.example.Aventura.Dto.RankingAventureiroDto;
 import TP1.example.Aventura.Dto.RelatorioMissaoDto;
-import TP1.example.Aventura.Repository.AventureiroRepository;
 import TP1.example.Aventura.Repository.MissaoRepository;
 import TP1.example.Aventura.Repository.ParticipacaoMissaoRepository;
 import lombok.RequiredArgsConstructor;

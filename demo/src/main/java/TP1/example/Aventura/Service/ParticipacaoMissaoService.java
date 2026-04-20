@@ -7,10 +7,12 @@ import TP1.example.Aventura.Repository.AventureiroRepository;
 import TP1.example.Aventura.Repository.MissaoRepository;
 import TP1.example.Aventura.Repository.ParticipacaoMissaoRepository;
 import TP1.example.Aventura.Utils.FormatarTimeStamp;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -57,68 +59,68 @@ public class ParticipacaoMissaoService {
                         FormatarTimeStamp.TimeStampParaString(p.getCriadoem())
                 ));
     }
-
+    @Transactional
     public ParticipacaoMissao Salvar(ParticipacaoMissao participacao) {
         Aventureiro aventureiro = essencialNomeDto.findById(
                         participacao.getAventureiro().getId())
-                .orElseThrow(() -> new RuntimeException("Aventureiro não encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Aventureiro não encontrado"));
 
         Missao missao = missaoRepository.findById(
                         participacao.getMissao().getId())
-                .orElseThrow(() -> new RuntimeException("Missão não encontrada"));
+                .orElseThrow(() -> new EntityNotFoundException("Missão não encontrada"));
 
         organizacaoValidator.existe(missao.getOrganizacao().getId());
 
         if (aventureiro.getStatus() == StatusAventureiro.INATIVO) {
-            throw new RuntimeException("Aventureiro inativo não pode participar de missões");
+            throw new IllegalStateException("Aventureiro inativo não pode participar de missões");
         }
 
         if (missao.getStatus() != StatusMissao.PLANEJADA
                 && missao.getStatus() != StatusMissao.EM_ANDAMENTO) {
-            throw new RuntimeException("Missão não está em estado compatível para aceitar participantes");
+            throw new IllegalStateException("Missão não está em estado compatível para aceitar participantes");
         }
 
         if (!aventureiro.getOrganizacao().getId()
                 .equals(missao.getOrganizacao().getId())) {
-            throw new RuntimeException("Aventureiro não pertence à organização da missão");
+            throw new IllegalStateException("Aventureiro não pertence à organização da missão");
         }
 
         if (participacaoRepository.existsByMissaoIdAndAventureiroId(
                 missao.getId(), aventureiro.getId())) {
-            throw new RuntimeException("Aventureiro já está participando desta missão");
+            throw new IllegalStateException("Aventureiro já está participando desta missão");
         }
 
         return participacaoRepository.save(participacao);
     }
-
+    @Transactional
     public void Deletar(Long missaoId, Long aventureiroId) {
         ParticipacaoMissaoId id = new ParticipacaoMissaoId(missaoId, aventureiroId);
         if (!participacaoRepository.existsById(id)) {
-            throw new RuntimeException("Participação não encontrada");
+            throw new EntityNotFoundException("Participação não encontrada");
         }
         participacaoRepository.deleteById(id);
     }
-
+    @Transactional
     public void AtualizarPapel(Long missaoId, Long aventureiroId, PapelMissao papel) {
         ParticipacaoMissaoId id = new ParticipacaoMissaoId(missaoId, aventureiroId);
         ParticipacaoMissao participacao = participacaoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Participação não encontrada"));
+                .orElseThrow(() -> new EntityNotFoundException("Participação não encontrada"));
         participacao.setPapel(papel);
         participacaoRepository.save(participacao);
     }
-
+    @Transactional
     public void DefinirMvp(Long missaoId, Long aventureiroId) {
         ParticipacaoMissaoId id = new ParticipacaoMissaoId(missaoId, aventureiroId);
         ParticipacaoMissao participacao = participacaoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Participação não encontrada"));
+                .orElseThrow(() -> new EntityNotFoundException("Participação não encontrada"));
         participacao.setMvp(true);
         participacaoRepository.save(participacao);
     }
-
+    @Transactional
     public void DefinirRecompensa(Long missaoId, Long aventureiroId, Integer ouro) {
         ParticipacaoMissaoId id = new ParticipacaoMissaoId(missaoId, aventureiroId);
         ParticipacaoMissao participacao = participacaoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Participação não encontrada"));
+                .orElseThrow(() -> new EntityNotFoundException("Participação não encontrada"));
         participacao.setRecompensaOuro(ouro);
         participacaoRepository.save(participacao);
     }
