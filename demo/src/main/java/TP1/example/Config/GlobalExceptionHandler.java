@@ -11,7 +11,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handle(RuntimeException ex) {
         return ResponseEntity
-                .status(404)
+                .status(500)
                 .body(ex.getMessage());
     }
 
