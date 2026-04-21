@@ -6,24 +6,29 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
-@Table(name = "role_permissions", schema = "audit")
+@Table(name = "user_roles", schema = "audit")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Permicoes_Cargos {
+public class UsuarioCargo {
     @EmbeddedId
-    private RolePermissionID id;
+    private UserRoleId id;
+
+    @ManyToOne
+    @MapsId("usuarioId")
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 
     @ManyToOne
     @MapsId("roleId")
     @JoinColumn(name = "role_id")
     private Cargo role;
 
-    @ManyToOne
-    @MapsId("permissionId")
-    @JoinColumn(name = "permission_id")
-    private Permicoes permission;
+    @Column(name = "granted_at")
+    private LocalDateTime grantedAt;
 
 }
