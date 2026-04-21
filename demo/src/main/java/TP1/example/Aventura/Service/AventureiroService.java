@@ -1,11 +1,13 @@
 package TP1.example.Aventura.Service;
 
+import TP1.example.Audit.Domain.Organizacoes;
+import TP1.example.Audit.Domain.Usuario;
 import TP1.example.Aventura.Domain.*;
-import TP1.example.Aventura.Dto.AventureiroTudo;
-import TP1.example.Aventura.Dto.EssencialNomeDto;
-import TP1.example.Aventura.Dto.PerfilCompletoDto;
+import TP1.example.Aventura.Dto.*;
+import TP1.example.Aventura.OrganizacaoValidator;
 import TP1.example.Aventura.Repository.AventureiroRepository;
 import TP1.example.Aventura.Repository.ParticipacaoMissaoRepository;
+import TP1.example.Aventura.UsuarioValidator;
 import TP1.example.Aventura.Utils.FormatarTimeStamp;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +29,8 @@ public class AventureiroService {
 
     private final AventureiroRepository repository;
     private final ParticipacaoMissaoRepository participacaoMissaoRepository;
-
-
+    private final OrganizacaoValidator organizacaoValidator;
+    private final UsuarioValidator usuarioValidator;
 
 
     public Page<AventureiroTudo> listarTodos(int page, int size) {
@@ -140,13 +142,50 @@ public class AventureiroService {
           );
     }
 
-    public Aventureiro buscarPorId(Long id) {
-        return repository.findById(id)
+    @Transactional(readOnly = true)
+    public AventureiroTudo buscarTudoPorId(Long id) {
+        Aventureiro a = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Aventureiro não encontrado"));
+
+        return new AventureiroTudo(
+                a.getId(),
+                a.getOrganizacao().getId(),
+                a.getUsuarioResponsavel().getNome(),
+                a.getNome(),
+                a.getClasse(),
+                a.getNivel(),
+                a.getStatus(),
+                a.getCompanheiro() != null ? a.getCompanheiro().getNome() : "Não Informado",
+                FormatarTimeStamp.TimeStampParaString(a.getCriadoem()),
+                FormatarTimeStamp.TimeStampParaString(a.getAtualizadoem())
+        );
     }
 
 
-    public Aventureiro salvar(Aventureiro aventureiro) {
+    @Transactional
+    public Aventureiro salvar(AventureiroRegistroDto dto) {
+
+        if (!organizacaoValidator.existe(dto.getOrganizacaoId())) {
+            throw new EntityNotFoundException("Organização não encontrada");
+        }
+
+        if (!usuarioValidator.existe(dto.getUsuarioResponsavelId())) {
+            throw new EntityNotFoundException("Usuário não encontrado");
+        }
+
+        Organizacoes organizacao = new Organizacoes();
+        organizacao.setId(dto.getOrganizacaoId());
+
+        Usuario usuario = new Usuario();
+        usuario.setId(dto.getUsuarioResponsavelId());
+
+        Aventureiro aventureiro = new Aventureiro();
+        aventureiro.setOrganizacao(organizacao);
+        aventureiro.setUsuarioResponsavel(usuario);
+        aventureiro.setNome(dto.getNome());
+        aventureiro.setClasse(dto.getClasse());
+        aventureiro.setNivel(dto.getNivel());
+
         return repository.save(aventureiro);
     }
 
@@ -157,50 +196,56 @@ public class AventureiroService {
     @Transactional()
     public void atualizarNome(Long id, String nome) {
         Aventureiro aventureiro= repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Aventureiro não Encotrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Aventureiro não encotrado"));
         aventureiro.setNome(nome);
         repository.save(aventureiro);
     }
     @Transactional()
     public void atualizarClasse(Long id, Classe classe) {
         Aventureiro aventureiro= repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Aventureiro não Encotrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Aventureiro não encotrado"));
         aventureiro.setClasse(classe);
         repository.save(aventureiro);
     }
     @Transactional()
     public void atualizarNivel(Long id, Integer nivel) {
         Aventureiro aventureiro= repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Aventureiro não Encotrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Aventureiro não encotrado"));
         aventureiro.setNivel(nivel);
         repository.save(aventureiro);
     }
     @Transactional()
     public void encerrarVinculo(Long id) {
         Aventureiro aventureiro= repository.findById(id)
-                .orElseThrow(() -> new  EntityNotFoundException("Aventureiro não Encotrado"));
+                .orElseThrow(() -> new  EntityNotFoundException("Aventureiro não encotrado"));
         aventureiro.setStatus(StatusAventureiro.INATIVO);
         repository.save(aventureiro);
     }
     @Transactional()
     public void recrutarNovamente(Long id) {
         Aventureiro aventureiro= repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Aventureiro não Encotrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Aventureiro não encotrado"));
         aventureiro.setStatus(StatusAventureiro.ATIVO);
         repository.save(aventureiro);
     }
-    @Transactional()
-    public void definirCompanheiro(Long id, Companheiro companheiro) {
-        Aventureiro aventureiro= repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Aventureiro não Encotrado"));
+    @Transactional
+    public void definirCompanheiro(Long id, CompanheiroRegistroDto dto) {
+        Aventureiro aventureiro = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Aventureiro não encontrado"));
+
+        Companheiro companheiro = new Companheiro();
+        companheiro.setNome(dto.getNome());
+        companheiro.setEspecie(dto.getEspecie());
+        companheiro.setLealdade(dto.getLealdade());
         companheiro.setAventureiro(aventureiro);
+
         aventureiro.setCompanheiro(companheiro);
         repository.save(aventureiro);
     }
     @Transactional()
     public void removerCompanheiro(Long id) {
         Aventureiro aventureiro= repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Aventureiro não Encotrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Aventureiro não encotrado"));
         aventureiro.setCompanheiro(null);
         repository.save(aventureiro);
     }

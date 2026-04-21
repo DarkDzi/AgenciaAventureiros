@@ -4,9 +4,7 @@ import TP1.example.Aventura.Domain.Aventureiro;
 import TP1.example.Aventura.Domain.Classe;
 import TP1.example.Aventura.Domain.Companheiro;
 import TP1.example.Aventura.Domain.StatusAventureiro;
-import TP1.example.Aventura.Dto.AventureiroTudo;
-import TP1.example.Aventura.Dto.EssencialNomeDto;
-import TP1.example.Aventura.Dto.PerfilCompletoDto;
+import TP1.example.Aventura.Dto.*;
 import TP1.example.Aventura.Service.AventureiroService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -77,26 +75,35 @@ public class AventureiroController {
     }
 
     @PostMapping
-    public ResponseEntity<Aventureiro> registrar(@RequestBody Aventureiro aventureiro) {
-        Aventureiro salvo = service.salvar(aventureiro);
+    public ResponseEntity<AventureiroTudo> registrar(@RequestBody AventureiroRegistroDto dto) {
+        Aventureiro salvo = service.salvar(dto);
+
+        AventureiroTudo response = new AventureiroTudo(
+                salvo.getId(),
+                salvo.getOrganizacao().getId(),
+                salvo.getUsuarioResponsavel().getNome(),
+                salvo.getNome(),
+                salvo.getClasse(),
+                salvo.getNivel(),
+                salvo.getStatus(),
+                salvo.getCompanheiro() != null ? salvo.getCompanheiro().getEspecie().name() : null,
+                salvo.getCriadoem().toString(),
+                salvo.getAtualizadoem().toString()
+        );
         URI location = URI.create("/aventureiros/" + salvo.getId());
-        return ResponseEntity.created(location).body(salvo);
+        return ResponseEntity.created(location).body(response);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Aventureiro> atualizar(@PathVariable Long id,
-                                                 @RequestBody Aventureiro novosDados) {
-        if (novosDados.getNome() != null) {
-            service.atualizarNome(id, novosDados.getNome());
-        }
-        if (novosDados.getClasse() != null) {
-            service.atualizarClasse(id, novosDados.getClasse());
-        }
-            if (novosDados.getNivel() != null) {
-                service.atualizarNivel(id, novosDados.getNivel());
-            }
-            return ResponseEntity.ok(service.buscarPorId(id));
-        }
+    public ResponseEntity<AventureiroTudo> atualizar(@PathVariable Long id,
+                                                     @RequestBody AventureiroAtualizarDto dto) {
+
+        if (dto.getNome() != null) service.atualizarNome(id, dto.getNome());
+        if (dto.getClasse() != null) service.atualizarClasse(id, dto.getClasse());
+        if (dto.getNivel() != null) service.atualizarNivel(id, dto.getNivel());
+
+        return ResponseEntity.ok(service.buscarTudoPorId(id));
+    }
 
 
     @PatchMapping("/{id}/encerrar")
@@ -112,10 +119,10 @@ public class AventureiroController {
     }
 
     @PutMapping("/{id}/companheiro")
-    public ResponseEntity<Aventureiro> definirCompanheiro(@PathVariable Long id,
-                                                          @RequestBody Companheiro companheiro) {
-        service.definirCompanheiro(id, companheiro);
-        return ResponseEntity.ok(service.buscarPorId(id));
+    public ResponseEntity<AventureiroTudo> definirCompanheiro(@PathVariable Long id,
+                                                              @RequestBody CompanheiroRegistroDto dto) {
+        service.definirCompanheiro(id, dto);
+        return ResponseEntity.ok(service.buscarTudoPorId(id));
     }
 
     @DeleteMapping("/{id}/companheiro")
