@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsuarioCargo {
+public class CargodeUsuario {
     @EmbeddedId
     private UserRoleId id;
 

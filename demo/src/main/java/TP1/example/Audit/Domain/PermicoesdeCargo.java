@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PermicoesCargos {
+public class PermicoesdeCargo {
     @EmbeddedId
     private RolePermissionID id;
 

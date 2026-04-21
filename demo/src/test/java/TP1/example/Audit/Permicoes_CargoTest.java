@@ -1,6 +1,6 @@
 package TP1.example.Audit;
 
-import TP1.example.Audit.Domain.PermicoesCargos;
+import TP1.example.Audit.Domain.PermicoesdeCargo;
 import TP1.example.Audit.Repository.Permicoes_CargoRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public class Permicoes_CargoTest {
 
     @Test
     void acessarpermicoesporcargo() {
-        List<PermicoesCargos> permicoescargo = permissionrolerepository.findByRoleId(1L);
+        List<PermicoesdeCargo> permicoescargo = permissionrolerepository.findByRoleId(1L);
 
         assertThat(permicoescargo)
                 .allMatch(u -> u.getPermission() != null);
