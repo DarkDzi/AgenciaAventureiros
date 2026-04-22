@@ -1,6 +1,7 @@
 package TP1.example.Aventura.Service;
 
 import TP1.example.Aventura.Domain.*;
+import TP1.example.Aventura.Dto.ParticipacaoRegistroDto;
 import TP1.example.Aventura.Dto.ParticipacaoTudo;
 import TP1.example.Aventura.OrganizacaoValidator;
 import TP1.example.Aventura.Repository.AventureiroRepository;
@@ -58,16 +59,12 @@ public class ParticipacaoMissaoService {
                 ));
     }
     @Transactional
-    public ParticipacaoMissao salvar(ParticipacaoMissao participacao) {
-        Aventureiro aventureiro = essencialNomeDto.findById(
-                        participacao.getAventureiro().getId())
+    public ParticipacaoMissao salvar(ParticipacaoRegistroDto dto) {
+        Aventureiro aventureiro = essencialNomeDto.findById(dto.getAventureiroId())
                 .orElseThrow(() -> new EntityNotFoundException("Aventureiro não encontrado"));
 
-        Missao missao = missaoRepository.findById(
-                        participacao.getMissao().getId())
+        Missao missao = missaoRepository.findById(dto.getMissaoId())
                 .orElseThrow(() -> new EntityNotFoundException("Missão não encontrada"));
-
-        organizacaoValidator.existe(missao.getOrganizacao().getId());
 
         if (aventureiro.getStatus() == StatusAventureiro.INATIVO) {
             throw new IllegalStateException("Aventureiro inativo não pode participar de missões");
@@ -87,6 +84,15 @@ public class ParticipacaoMissaoService {
                 missao.getId(), aventureiro.getId())) {
             throw new IllegalStateException("Aventureiro já está participando desta missão");
         }
+
+        ParticipacaoMissaoId id = new ParticipacaoMissaoId(missao.getId(), aventureiro.getId());
+
+        ParticipacaoMissao participacao = new ParticipacaoMissao();
+        participacao.setId(id);
+        participacao.setMissao(missao);
+        participacao.setAventureiro(aventureiro);
+        participacao.setPapel(dto.getPapel());
+        participacao.setRecompensaOuro(dto.getRecompensaOuro());
 
         return participacaoRepository.save(participacao);
     }

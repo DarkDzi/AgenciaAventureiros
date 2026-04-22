@@ -2,6 +2,7 @@ package TP1.example.Aventura.Controller;
 
 import TP1.example.Aventura.Domain.ParticipacaoMissao;
 import TP1.example.Aventura.Domain.PapelMissao;
+import TP1.example.Aventura.Dto.ParticipacaoRegistroDto;
 import TP1.example.Aventura.Dto.ParticipacaoTudo;
 import TP1.example.Aventura.Service.ParticipacaoMissaoService;
 import lombok.RequiredArgsConstructor;
@@ -43,10 +44,9 @@ public class ParticipacaoMissaoController {
     }
 
     @PostMapping
-    public ParticipacaoMissao salvar(@RequestBody ParticipacaoMissao participacao) {
-        return participacaoMissaoService.salvar(participacao);
+    public ParticipacaoMissao salvar(@RequestBody ParticipacaoRegistroDto dto) {
+        return participacaoMissaoService.salvar(dto);
     }
-
     @DeleteMapping("/{missaoId}/{aventureiroId}")
     public void deletar(
             @PathVariable Long missaoId,

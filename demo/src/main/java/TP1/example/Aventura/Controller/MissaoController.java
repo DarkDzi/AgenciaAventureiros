@@ -4,6 +4,7 @@ import TP1.example.Aventura.Domain.Missao;
 import TP1.example.Aventura.Domain.NiveldePerigo;
 import TP1.example.Aventura.Domain.StatusMissao;
 import TP1.example.Aventura.Dto.MissaoEspecificaDto;
+import TP1.example.Aventura.Dto.MissaoRegistroDto;
 import TP1.example.Aventura.Dto.MissaoTudo;
 import TP1.example.Aventura.Dto.ResultadoMinimoMissaoDto;
 import TP1.example.Aventura.Service.MissaoService;
@@ -76,8 +77,8 @@ public class MissaoController {
     }
 
     @PostMapping
-    public Missao salvar(@RequestBody Missao missao) {
-        return missaoService.salvar(missao);
+    public Missao salvar(@RequestBody MissaoRegistroDto dto) {
+        return missaoService.salvar(dto);
     }
 
     @DeleteMapping("/{id}")

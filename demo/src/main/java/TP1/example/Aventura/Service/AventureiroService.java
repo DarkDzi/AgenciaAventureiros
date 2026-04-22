@@ -233,13 +233,20 @@ public class AventureiroService {
         Aventureiro aventureiro = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Aventureiro não encontrado"));
 
-        Companheiro companheiro = new Companheiro();
-        companheiro.setNome(dto.getNome());
-        companheiro.setEspecie(dto.getEspecie());
-        companheiro.setLealdade(dto.getLealdade());
-        companheiro.setAventureiro(aventureiro);
+        if (aventureiro.getCompanheiro() != null) {
+            Companheiro companheiro = aventureiro.getCompanheiro();
+            companheiro.setNome(dto.getNome());
+            companheiro.setEspecie(dto.getEspecie());
+            companheiro.setLealdade(dto.getLealdade());
+        } else {
+            Companheiro companheiro = new Companheiro();
+            companheiro.setNome(dto.getNome());
+            companheiro.setEspecie(dto.getEspecie());
+            companheiro.setLealdade(dto.getLealdade());
+            companheiro.setAventureiro(aventureiro);
+            aventureiro.setCompanheiro(companheiro);
+        }
 
-        aventureiro.setCompanheiro(companheiro);
         repository.save(aventureiro);
     }
     @Transactional()

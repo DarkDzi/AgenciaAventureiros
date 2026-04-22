@@ -1,13 +1,11 @@
 package TP1.example.Aventura.Service;
 
+import TP1.example.Audit.Domain.Organizacoes;
 import TP1.example.Aventura.Domain.Missao;
 import TP1.example.Aventura.Domain.NiveldePerigo;
 import TP1.example.Aventura.Domain.ParticipacaoMissao;
 import TP1.example.Aventura.Domain.StatusMissao;
-import TP1.example.Aventura.Dto.MissaoEspecificaDto;
-import TP1.example.Aventura.Dto.MissaoTudo;
-import TP1.example.Aventura.Dto.ParcipanteMissaoEspecificaDto;
-import TP1.example.Aventura.Dto.ResultadoMinimoMissaoDto;
+import TP1.example.Aventura.Dto.*;
 import TP1.example.Aventura.OrganizacaoValidator;
 import TP1.example.Aventura.Repository.MissaoRepository;
 import TP1.example.Aventura.Repository.ParticipacaoMissaoRepository;
@@ -130,8 +128,19 @@ public class MissaoService {
       );
     }
     @Transactional
-    public Missao salvar(Missao missao) {
-        organizacaoValidator.existe(missao.getOrganizacao().getId());
+    public Missao salvar(MissaoRegistroDto dto) {
+        if (!organizacaoValidator.existe(dto.getOrganizacaoId())) {
+            throw new EntityNotFoundException("Organização não encontrada");
+        }
+
+        Organizacoes organizacao = new Organizacoes();
+        organizacao.setId(dto.getOrganizacaoId());
+
+        Missao missao = new Missao();
+        missao.setOrganizacao(organizacao);
+        missao.setTitulo(dto.getTitulo());
+        missao.setNivelPerigo(dto.getNivelPerigo());
+
         return missaoRepository.save(missao);
     }
     @Transactional
